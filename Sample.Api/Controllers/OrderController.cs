@@ -1,7 +1,4 @@
 using System;
-using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using MassTransit;
 using MassTransit.Definition;

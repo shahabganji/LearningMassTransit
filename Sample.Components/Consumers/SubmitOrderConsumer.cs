@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -10,7 +9,6 @@ namespace Sample.Components.Consumers
     public sealed class SubmitOrderConsumer : IConsumer<ISubmitOrder>
     {
         private readonly ILogger<SubmitOrderConsumer> _logger;
-
         public SubmitOrderConsumer(ILogger<SubmitOrderConsumer> logger)
         {
             _logger = logger;
@@ -18,8 +16,8 @@ namespace Sample.Components.Consumers
 
         public async Task Consume(ConsumeContext<ISubmitOrder> context)
         {
-            _logger.LogDebug(
-                "SubmitOrderConsumer, {CustomerNumber}", context.Message.Customer);
+            _logger.LogDebug("SubmitOrderConsumer, {CustomerNumber}",
+                context.Message.Customer);
             if (context.Message.Customer.Contains("TEST"))
             {
                 if (context.ResponseAddress != null)
