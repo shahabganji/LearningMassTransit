@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UserSecretsId>dotnet-Sample.Service-818268F7-3F5A-4829-AF2E-AF67B6C9A99B</UserSecretsId>
+        <LangVersion>Latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="6.3.2" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="6.3.2" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Sample.Components\Sample.Components.csproj" />
+    </ItemGroup>
+</Project>
