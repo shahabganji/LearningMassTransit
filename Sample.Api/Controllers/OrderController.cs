@@ -4,9 +4,11 @@ using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using MassTransit;
+using MassTransit.Definition;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Sample.Components.Consumers;
 using Sample.Contracts;
 
 namespace Sample.Api.Controllers
@@ -17,11 +19,16 @@ namespace Sample.Api.Controllers
     {
         private readonly ILogger<OrderController> _logger;
         private readonly IRequestClient<ISubmitOrder> _submitOrderRequestClient;
+        private readonly ISendEndpointProvider _endpointProvider;
 
-        public OrderController(ILogger<OrderController> logger, IRequestClient<ISubmitOrder> submitOrderRequestClient)
+        public OrderController(
+            ILogger<OrderController> logger,
+            IRequestClient<ISubmitOrder> submitOrderRequestClient,
+            ISendEndpointProvider endpointProvider)
         {
             _logger = logger;
             _submitOrderRequestClient = submitOrderRequestClient;
+            _endpointProvider = endpointProvider;
         }
 
         [HttpPost("{id}/{customerNumber}")]
@@ -47,6 +54,23 @@ namespace Sample.Api.Controllers
 
             var rejectedResponse = await rejected;
             return BadRequest(rejectedResponse.Message);
+        }
+
+        [HttpPut("{id}/{customerNumber}")]
+        [ProducesResponseType( StatusCodes.Status202Accepted)]
+        public async Task<IActionResult> Put(Guid id, string customerNumber)
+        {
+            var endpoint = await _endpointProvider.GetSendEndpoint(
+                new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
+
+            await endpoint.Send<ISubmitOrder>(new
+            {
+                OrderId = id,
+                Customer = customerNumber,
+                InVar.Timestamp
+            });
+
+            return Accepted();
         }
     }
 }

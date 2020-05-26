@@ -7,7 +7,7 @@ using Sample.Contracts;
 namespace Sample.Components.Consumers
 {
     // todo: add a cache decorator on top of this
-    public sealed class SubmitOrderConsumer :  IConsumer<ISubmitOrder>
+    public sealed class SubmitOrderConsumer : IConsumer<ISubmitOrder>
     {
         private readonly ILogger<SubmitOrderConsumer> _logger;
 
@@ -15,30 +15,32 @@ namespace Sample.Components.Consumers
         {
             _logger = logger;
         }
-        
+
         public async Task Consume(ConsumeContext<ISubmitOrder> context)
         {
             _logger.LogDebug(
-                "SubmitOrderConsumer, {CustomerNumber}" , context.Message.Customer);
+                "SubmitOrderConsumer, {CustomerNumber}", context.Message.Customer);
             if (context.Message.Customer.Contains("TEST"))
             {
-                await context.RespondAsync<IOrderSubmissionRejected>(new
-                {
-                    InVar.Timestamp, 
-                    context.Message.Customer,
-                    context.Message.OrderId,
-                    Reason = $"Test Customer cannot submit order: {context.Message.Customer}"
-                });
-                
+                if (context.ResponseAddress != null)
+                    await context.RespondAsync<IOrderSubmissionRejected>(new
+                    {
+                        InVar.Timestamp,
+                        context.Message.Customer,
+                        context.Message.OrderId,
+                        Reason = $"Test Customer cannot submit order: {context.Message.Customer}"
+                    });
+
                 return;
             }
-            
-            await context.RespondAsync<IOrderSubmissionAccepted>(new
-            {
-                InVar.Timestamp,
-                context.Message.Customer,
-                context.Message.OrderId
-            }).ConfigureAwait(false);
+
+            if (context.RequestId != null)
+                await context.RespondAsync<IOrderSubmissionAccepted>(new
+                {
+                    InVar.Timestamp,
+                    context.Message.Customer,
+                    context.Message.OrderId
+                }).ConfigureAwait(false);
         }
     }
 }
