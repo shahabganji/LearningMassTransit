@@ -36,13 +36,13 @@ namespace Sample.Api
                 cfg.AddBus(context => Bus.Factory.CreateUsingRabbitMq());
                 // this replaces Mediator, also adds health checks
                 services.AddMassTransitHostedService();
-                
+
                 // adds a client that knows how to send a request
                 cfg.AddRequestClient<ISubmitOrder>(); 
                 
             });
 
-            services.AddOpenApiDocument();
+            services.AddOpenApiDocument(settings => settings.Title = "Sample Api" );
             
             services.AddControllers();
         }
