@@ -43,9 +43,11 @@ namespace Sample.Api
                 // this replaces Mediator, also adds health checks
                 services.AddMassTransitHostedService();
 
-                // adds a client that knows how to send a request
-                cfg.AddRequestClient<SubmitOrderCommand>(
-                    new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); 
+                // adds a client that knows how to send a request to an endpoint, this endpoint should be the same 
+                // as the endpoint set for the consumer, either manually or by formatters
+                cfg.AddRequestClient<SubmitOrderCommand>(new Uri("queue:submit-order"));
+                    // new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
+                    
                 cfg.AddRequestClient<CheckOrderRequestedEvent>();
                 
             });

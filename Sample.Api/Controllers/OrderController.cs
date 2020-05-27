@@ -1,9 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using MassTransit;
+using MassTransit.Definition;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Sample.Components.Consumers;
 using Sample.Contracts.Commands;
 using Sample.Contracts.Events;
 using Sample.Contracts.Responses;
@@ -78,9 +80,10 @@ namespace Sample.Api.Controllers
         public async Task<IActionResult> Put(Guid id, string customerNumber)
         {
             var endpoint = await _endpointProvider.GetSendEndpoint(
-                new Uri($"queue:submit-order"));
+                new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
+                // new Uri($"queue:submit-order"));
 
-            await endpoint.Send<SubmitOrderCommand>(new
+                await endpoint.Send<SubmitOrderCommand>(new
             {
                 OrderId = id,
                 Customer = customerNumber,
