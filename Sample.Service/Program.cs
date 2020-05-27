@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Sample.Components.Consumers;
+using Sample.Components.StateMachines;
 
 namespace Sample.Service
 {
@@ -32,6 +33,10 @@ namespace Sample.Service
                         cfg =>
                         {
                             cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
+
+                            cfg.AddSagaStateMachine<OrderStateMachine, OrderState>()
+                                .RedisRepository(); 
+                            
                             cfg.ConfigureBus();
                         });
 

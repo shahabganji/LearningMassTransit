@@ -1,8 +1,8 @@
 using System;
 
-namespace Sample.Contracts.Events
+namespace Sample.Contracts.Responses
 {
-    public interface OrderStatus
+    public interface OrderStatusResponse
     {
         public Guid OrderId { get; set; }
         public string State { get; set; }

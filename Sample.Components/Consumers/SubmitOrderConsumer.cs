@@ -1,12 +1,14 @@
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using Sample.Contracts;
+using Sample.Contracts.Commands;
+using Sample.Contracts.Events;
+using Sample.Contracts.Responses;
 
 namespace Sample.Components.Consumers
 {
     // todo: add a cache decorator on top of this
-    public sealed class SubmitOrderConsumer : IConsumer<ISubmitOrder>
+    public sealed class SubmitOrderConsumer : IConsumer<SubmitOrderCommand>
     {
         private readonly ILogger<SubmitOrderConsumer> _logger;
         public SubmitOrderConsumer(ILogger<SubmitOrderConsumer> logger)
@@ -14,14 +16,14 @@ namespace Sample.Components.Consumers
             _logger = logger;
         }
 
-        public async Task Consume(ConsumeContext<ISubmitOrder> context)
+        public async Task Consume(ConsumeContext<SubmitOrderCommand> context)
         {
             _logger.LogDebug("SubmitOrderConsumer, {CustomerNumber}",
                 context.Message.Customer);
             if (context.Message.Customer.Contains("TEST"))
             {
                 if (context.ResponseAddress != null)
-                    await context.RespondAsync<IOrderSubmissionRejected>(new
+                    await context.RespondAsync<OrderSubmissionRejectedResponse>(new
                     {
                         InVar.Timestamp,
                         context.Message.Customer,
@@ -31,9 +33,16 @@ namespace Sample.Components.Consumers
 
                 return;
             }
+            
+            await context.Publish<OrderSubmittedEvent>(new
+            {
+                context.Message.OrderId,
+                InVar.Timestamp,
+                CustomerName = context.Message.Customer
+            });
 
             if (context.RequestId != null)
-                await context.RespondAsync<IOrderSubmissionAccepted>(new
+                await context.RespondAsync<OrderSubmissionAcceptedResponse>(new
                 {
                     InVar.Timestamp,
                     context.Message.Customer,

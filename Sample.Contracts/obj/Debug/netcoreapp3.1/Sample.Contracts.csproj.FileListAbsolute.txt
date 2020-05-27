@@ -1,9 +1,0 @@
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/bin/Debug/netcoreapp3.1/Sample.Contracts.deps.json
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/bin/Debug/netcoreapp3.1/Sample.Contracts.dll
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/bin/Debug/netcoreapp3.1/Sample.Contracts.pdb
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/obj/Debug/netcoreapp3.1/Sample.Contracts.csprojAssemblyReference.cache
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/obj/Debug/netcoreapp3.1/Sample.Contracts.csproj.CoreCompileInputs.cache
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/obj/Debug/netcoreapp3.1/Sample.Contracts.AssemblyInfoInputs.cache
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/obj/Debug/netcoreapp3.1/Sample.Contracts.AssemblyInfo.cs
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/obj/Debug/netcoreapp3.1/Sample.Contracts.dll
-/Users/shahab/dev/playground/learning/dotnet/LearningMassTransit/Sample.Contracts/obj/Debug/netcoreapp3.1/Sample.Contracts.pdb

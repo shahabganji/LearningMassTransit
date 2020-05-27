@@ -1,6 +1,6 @@
 using System;
 
-namespace Sample.Contracts
+namespace Sample.Contracts.Events
 {
     public interface OrderSubmittedEvent
     {

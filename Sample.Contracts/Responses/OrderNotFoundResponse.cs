@@ -2,7 +2,7 @@ using System;
 
 namespace Sample.Contracts.Responses
 {
-    public interface OrderNotFound
+    public interface OrderNotFoundResponse
     {
         public Guid OrderId { get; }
     }
