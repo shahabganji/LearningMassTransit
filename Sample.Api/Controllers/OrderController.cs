@@ -58,7 +58,7 @@ namespace Sample.Api.Controllers
         public async Task<IActionResult> Put(Guid id, string customerNumber)
         {
             var endpoint = await _endpointProvider.GetSendEndpoint(
-                new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
+                new Uri($"queue:submit-order"));
 
             await endpoint.Send<ISubmitOrder>(new
             {

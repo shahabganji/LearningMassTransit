@@ -33,7 +33,10 @@ namespace Sample.Api
                 // cfg.AddMediator();
                 
                 services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
-                cfg.AddBus(context => Bus.Factory.CreateUsingRabbitMq());
+                cfg.AddBus(context => Bus.Factory.CreateUsingRabbitMq(configure =>
+                {
+                    configure.ConfigureEndpoints(context.Container);
+                }));
                 // this replaces Mediator, also adds health checks
                 services.AddMassTransitHostedService();
 
