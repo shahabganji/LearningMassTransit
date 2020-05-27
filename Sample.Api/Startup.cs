@@ -38,6 +38,7 @@ namespace Sample.Api
                 services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
                 cfg.AddBus(context => Bus.Factory.CreateUsingRabbitMq(configure =>
                 {
+                    configure.Host("localhost", "sample.api");
                     configure.ConfigureEndpoints(context.Container);
                 }));
                 // this replaces Mediator, also adds health checks
