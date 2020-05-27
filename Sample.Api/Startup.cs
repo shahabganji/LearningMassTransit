@@ -1,3 +1,4 @@
+using System;
 using MassTransit;
 using MassTransit.Definition;
 using Microsoft.AspNetCore.Builder;
@@ -6,7 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Sample.Contracts;
+using Sample.Components.Consumers;
+using Sample.Contracts.Commands;
+using Sample.Contracts.Events;
 
 namespace Sample.Api
 {
@@ -41,7 +44,9 @@ namespace Sample.Api
                 services.AddMassTransitHostedService();
 
                 // adds a client that knows how to send a request
-                cfg.AddRequestClient<ISubmitOrder>(); 
+                cfg.AddRequestClient<SubmitOrderCommand>(
+                    new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); 
+                cfg.AddRequestClient<CheckOrderEvent>();
                 
             });
 

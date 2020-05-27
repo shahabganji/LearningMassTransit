@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using MassTransit;
-using MassTransit.Definition;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Sample.Components.Consumers;
-using Sample.Contracts;
+using Sample.Contracts.Commands;
+using Sample.Contracts.Events;
+using Sample.Contracts.Responses;
 
 namespace Sample.Api.Controllers
 {
@@ -15,27 +15,47 @@ namespace Sample.Api.Controllers
     public sealed class OrderController : Controller
     {
         private readonly ILogger<OrderController> _logger;
-        private readonly IRequestClient<ISubmitOrder> _submitOrderRequestClient;
+        private readonly IRequestClient<SubmitOrderCommand> _submitOrderRequestClient;
+        private readonly IRequestClient<CheckOrderEvent> _checkOrderClient;
         private readonly ISendEndpointProvider _endpointProvider;
 
         public OrderController(
             ILogger<OrderController> logger,
-            IRequestClient<ISubmitOrder> submitOrderRequestClient,
+            IRequestClient<SubmitOrderCommand> submitOrderRequestClient,
+            IRequestClient<CheckOrderEvent> checkOrderClient,
             ISendEndpointProvider endpointProvider)
         {
             _logger = logger;
             _submitOrderRequestClient = submitOrderRequestClient;
+            _checkOrderClient = checkOrderClient;
             _endpointProvider = endpointProvider;
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(OrderStatusResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(OrderNotFoundResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var (status,notFound) = await _checkOrderClient.GetResponse<OrderStatusResponse,OrderNotFoundResponse>(new
+            {
+                OrderId = id
+            });
+
+            var response = status.IsCompletedSuccessfully
+                ? (IActionResult) Ok((await status).Message)
+                : NotFound((await notFound).Message);
+            
+            return  response;
+        }
+        
         [HttpPost("{id}/{customerNumber}")]
-        [ProducesResponseType(typeof(IOrderSubmissionAccepted), StatusCodes.Status202Accepted)]
-        [ProducesResponseType(typeof(IOrderSubmissionRejected), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(OrderSubmissionAcceptedResponse), StatusCodes.Status202Accepted)]
+        [ProducesResponseType(typeof(OrderSubmissionRejectedResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post(Guid id, string customerNumber)
         {
             // the default timeout is 30 sec
             var (accepted, rejected) =
-                await _submitOrderRequestClient.GetResponse<IOrderSubmissionAccepted, IOrderSubmissionRejected>(
+                await _submitOrderRequestClient.GetResponse<OrderSubmissionAcceptedResponse, OrderSubmissionRejectedResponse>(
                     new
                     {
                         OrderId = id,
@@ -60,7 +80,7 @@ namespace Sample.Api.Controllers
             var endpoint = await _endpointProvider.GetSendEndpoint(
                 new Uri($"queue:submit-order"));
 
-            await endpoint.Send<ISubmitOrder>(new
+            await endpoint.Send<SubmitOrderCommand>(new
             {
                 OrderId = id,
                 Customer = customerNumber,
