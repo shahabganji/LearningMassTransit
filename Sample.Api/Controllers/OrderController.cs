@@ -15,18 +15,18 @@ namespace Sample.Api.Controllers
     public sealed class OrderController : Controller
     {
         private readonly ILogger<OrderController> _logger;
-        private readonly IRequestClient<SubmitOrderCommand> _submitOrderRequestClient;
-        private readonly IRequestClient<CheckOrderEvent> _checkOrderClient;
+        private readonly IRequestClient<SubmitOrderCommand> _submitOrderClient;
+        private readonly IRequestClient<CheckOrderRequestedEvent> _checkOrderClient;
         private readonly ISendEndpointProvider _endpointProvider;
 
         public OrderController(
             ILogger<OrderController> logger,
-            IRequestClient<SubmitOrderCommand> submitOrderRequestClient,
-            IRequestClient<CheckOrderEvent> checkOrderClient,
+            IRequestClient<SubmitOrderCommand> submitOrderClient,
+            IRequestClient<CheckOrderRequestedEvent> checkOrderClient,
             ISendEndpointProvider endpointProvider)
         {
             _logger = logger;
-            _submitOrderRequestClient = submitOrderRequestClient;
+            _submitOrderClient = submitOrderClient;
             _checkOrderClient = checkOrderClient;
             _endpointProvider = endpointProvider;
         }
@@ -55,7 +55,7 @@ namespace Sample.Api.Controllers
         {
             // the default timeout is 30 sec
             var (accepted, rejected) =
-                await _submitOrderRequestClient.GetResponse<OrderSubmissionAcceptedResponse, OrderSubmissionRejectedResponse>(
+                await _submitOrderClient.GetResponse<OrderSubmissionAcceptedResponse, OrderSubmissionRejectedResponse>(
                     new
                     {
                         OrderId = id,

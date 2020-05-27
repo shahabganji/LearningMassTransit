@@ -46,7 +46,7 @@ namespace Sample.Api
                 // adds a client that knows how to send a request
                 cfg.AddRequestClient<SubmitOrderCommand>(
                     new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}")); 
-                cfg.AddRequestClient<CheckOrderEvent>();
+                cfg.AddRequestClient<CheckOrderRequestedEvent>();
                 
             });
 

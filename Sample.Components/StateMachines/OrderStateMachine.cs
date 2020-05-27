@@ -61,7 +61,7 @@ namespace Sample.Components.StateMachines
         public State Submitted { get; set; }
 
         public Event<OrderSubmittedEvent> OrderSubmitted { get; private set; }
-        public Event<CheckOrderEvent> OrderStatusRequested { get; private set; }
+        public Event<CheckOrderRequestedEvent> OrderStatusRequested { get; private set; }
     }
 
     public class OrderState

@@ -2,7 +2,7 @@ using System;
 
 namespace Sample.Contracts.Events
 {
-    public interface CheckOrderEvent
+    public interface CheckOrderRequestedEvent
     {
         public Guid OrderId { get; }
     }
