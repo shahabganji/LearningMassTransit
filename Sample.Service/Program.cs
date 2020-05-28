@@ -1,16 +1,12 @@
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using GreenPipes;
 using MassTransit;
 using MassTransit.Definition;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Sample.Components.Consumers;
 using Sample.Components.StateMachines;
 
