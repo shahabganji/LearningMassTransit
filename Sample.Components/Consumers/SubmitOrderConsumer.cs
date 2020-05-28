@@ -14,6 +14,8 @@ namespace Sample.Components.Consumers
     public sealed class SubmitOrderConsumer : IConsumer<SubmitOrderCommand>
     {
         private readonly ILogger<SubmitOrderConsumer> _logger;
+        
+        public SubmitOrderConsumer(){}
         public SubmitOrderConsumer(ILogger<SubmitOrderConsumer> logger)
         {
             _logger = logger;
@@ -21,7 +23,7 @@ namespace Sample.Components.Consumers
 
         public async Task Consume(ConsumeContext<SubmitOrderCommand> context)
         {
-            _logger.LogDebug("SubmitOrderConsumer, {CustomerNumber}",
+            _logger?.LogDebug("SubmitOrderConsumer, {CustomerNumber}",
                 context.Message.Customer);
             if (context.Message.Customer.Contains("TEST"))
             {
