@@ -61,12 +61,15 @@ namespace Sample.Service
                 Bus.Factory.CreateUsingRabbitMq(
                     busFactoryConfigurator =>
                     {
-                        busFactoryConfigurator.Host("localhost", "sample.api");
+                        var host = busFactoryConfigurator.Host("localhost", "sample.api");
                         
-                        // we could set a consumer here by using ReceiveEndpoint,
-                        // or use the extension method of AddConsumer* on IServiceCollectionConfigurator
-                        // it is also possible to configure endpoint by xDefinitions, e.g. SagaDefinition<T>
-                        // busFactoryConfigurator.ReceiveEndpoint("submit-order", e =>
+                        // // we could set a consumer here by using ReceiveEndpoint,
+                        // // or use the extension method of AddConsumer* on IServiceCollectionConfigurator
+                        // // it is also possible to configure endpoint by xDefinitions, e.g. SagaDefinition<T>
+                        // // NOT adding a receive endpoint name, publishes the message to all Consumer instances
+                        // // Broadcasting Pub/Sub, not Competitive Consumer, the latter will be available if 
+                        // // Receive endpoint has a name 
+                        // busFactoryConfigurator.ReceiveEndpoint(host, e =>
                         // {
                         //     e.UseRetry(r=>r.Exponential(3,TimeSpan.FromMilliseconds(300),TimeSpan.FromMilliseconds(2000),
                         //         TimeSpan.FromMilliseconds(100)));
@@ -74,6 +77,7 @@ namespace Sample.Service
                         //     e.Consumer(
                         //         () => new SubmitOrderConsumer(context.Container.GetService<ILogger<SubmitOrderConsumer>>()));
                         // });
+                        
                         // creates queues, sagas and etc.
                         busFactoryConfigurator.ConfigureEndpoints(context.Container);
                     }));

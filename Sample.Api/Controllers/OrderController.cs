@@ -20,17 +20,19 @@ namespace Sample.Api.Controllers
         private readonly IRequestClient<SubmitOrderCommand> _submitOrderClient;
         private readonly IRequestClient<CheckOrderRequestedEvent> _checkOrderClient;
         private readonly ISendEndpointProvider _endpointProvider;
+        private readonly IBusControl _bus;
 
         public OrderController(
             ILogger<OrderController> logger,
             IRequestClient<SubmitOrderCommand> submitOrderClient,
             IRequestClient<CheckOrderRequestedEvent> checkOrderClient,
-            ISendEndpointProvider endpointProvider)
+            ISendEndpointProvider endpointProvider, IBusControl bus)
         {
             _logger = logger;
             _submitOrderClient = submitOrderClient;
             _checkOrderClient = checkOrderClient;
             _endpointProvider = endpointProvider;
+            _bus = bus;
         }
 
         [HttpGet("{id}")]
@@ -38,7 +40,7 @@ namespace Sample.Api.Controllers
         [ProducesResponseType(typeof(OrderNotFoundResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Guid id)
         {
-            var (status,notFound) = await _checkOrderClient.GetResponse<OrderStatusResponse,OrderNotFoundResponse>(new
+            var (status, notFound) = await _checkOrderClient.GetResponse<OrderStatusResponse, OrderNotFoundResponse>(new
             {
                 OrderId = id
             });
@@ -46,10 +48,10 @@ namespace Sample.Api.Controllers
             var response = status.IsCompletedSuccessfully
                 ? (IActionResult) Ok((await status).Message)
                 : NotFound((await notFound).Message);
-            
-            return  response;
+
+            return response;
         }
-        
+
         [HttpPost("{id}/{customerNumber}")]
         [ProducesResponseType(typeof(OrderSubmissionAcceptedResponse), StatusCodes.Status202Accepted)]
         [ProducesResponseType(typeof(OrderSubmissionRejectedResponse), StatusCodes.Status400BadRequest)]
@@ -76,19 +78,26 @@ namespace Sample.Api.Controllers
         }
 
         [HttpPut("{id}/{customerNumber}")]
-        [ProducesResponseType( StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public async Task<IActionResult> Put(Guid id, string customerNumber)
         {
             var endpoint = await _endpointProvider.GetSendEndpoint(
                 new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
-                // new Uri($"queue:submit-order"));
+            // new Uri($"queue:submit-order"));
 
-                await endpoint.Send<SubmitOrderCommand>(new
+            await _bus.Publish<SubmitOrderCommand>(new
             {
                 OrderId = id,
                 Customer = customerNumber,
                 InVar.Timestamp
             });
+
+            // await endpoint.Send<SubmitOrderCommand>(new
+            // {
+            //     OrderId = id,
+            //     Customer = customerNumber,
+            //     InVar.Timestamp
+            // });
 
             return Accepted();
         }

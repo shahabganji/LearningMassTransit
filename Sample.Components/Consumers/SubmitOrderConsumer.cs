@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using GreenPipes;
 using MassTransit;
@@ -57,7 +58,8 @@ namespace Sample.Components.Consumers
     public class SubmitOrderConsumerDefinition
         : ConsumerDefinition<SubmitOrderConsumer>
     {
-        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator, IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
+        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
+            IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
         {
             endpointConfigurator.UseInMemoryOutbox();
             endpointConfigurator.UseRetry(r => r.Interval(3,1000));
