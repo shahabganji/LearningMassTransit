@@ -71,7 +71,7 @@ namespace Sample.Components.Consumers
             IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
         {
             endpointConfigurator.UseInMemoryOutbox();
-            endpointConfigurator.UseRetry(r => r.Interval(3,1000));
+            endpointConfigurator.UseMessageRetry(r => r.Interval(3,1000));
         }
     }
 }
