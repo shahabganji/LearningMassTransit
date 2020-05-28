@@ -36,9 +36,10 @@ namespace Sample.Service
                     services.AddMassTransit(
                         cfg =>
                         {
-                            // cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
+                            cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
 
-                            cfg.AddSagaStateMachine<OrderStateMachine, OrderState>()
+                            cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(
+                                    typeof(OrderStateSagaDefinition))
                                 .RedisRepository(); 
                             
                             cfg.ConfigureBus();
@@ -63,15 +64,16 @@ namespace Sample.Service
                         busFactoryConfigurator.Host("localhost", "sample.api");
                         
                         // we could set a consumer here by using ReceiveEndpoint,
-                        // or use the extension method of AddConsumer* on IServiceCollectionConfigurator 
-                        busFactoryConfigurator.ReceiveEndpoint("submit-order", e =>
-                        {
-                            e.UseRetry(r=>r.Exponential(3,TimeSpan.FromMilliseconds(300),TimeSpan.FromMilliseconds(2000),
-                                TimeSpan.FromMilliseconds(100)));
-                            e.UseInMemoryOutbox();
-                            e.Consumer(
-                                () => new SubmitOrderConsumer(context.Container.GetService<ILogger<SubmitOrderConsumer>>()));
-                        });
+                        // or use the extension method of AddConsumer* on IServiceCollectionConfigurator
+                        // it is also possible to configure endpoint by xDefinitions, e.g. SagaDefinition<T>
+                        // busFactoryConfigurator.ReceiveEndpoint("submit-order", e =>
+                        // {
+                        //     e.UseRetry(r=>r.Exponential(3,TimeSpan.FromMilliseconds(300),TimeSpan.FromMilliseconds(2000),
+                        //         TimeSpan.FromMilliseconds(100)));
+                        //     e.UseInMemoryOutbox();
+                        //     e.Consumer(
+                        //         () => new SubmitOrderConsumer(context.Container.GetService<ILogger<SubmitOrderConsumer>>()));
+                        // });
                         // creates queues, sagas and etc.
                         busFactoryConfigurator.ConfigureEndpoints(context.Container);
                     }));

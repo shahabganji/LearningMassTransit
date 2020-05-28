@@ -1,6 +1,8 @@
 using System;
 using Automatonymous;
+using GreenPipes;
 using MassTransit;
+using MassTransit.Definition;
 using MassTransit.RedisIntegration;
 using Sample.Contracts.Events;
 using Sample.Contracts.Responses;
@@ -77,4 +79,15 @@ namespace Sample.Components.StateMachines
         public DateTime Updated { get; set; }
         public DateTime? SubmitDate { get; set; }
     }
+
+    public class OrderStateSagaDefinition
+        : SagaDefinition<OrderState>
+    {
+        protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<OrderState> sagaConfigurator)
+        {
+            endpointConfigurator.UseRetry(r => r.Intervals(500,5000,10000));
+            endpointConfigurator.UseInMemoryOutbox();
+        }
+    }
+    
 }
