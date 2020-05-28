@@ -1,4 +1,5 @@
 using System;
+using System.Runtime;
 using System.Threading.Tasks;
 using GreenPipes;
 using MassTransit;
@@ -58,6 +59,14 @@ namespace Sample.Components.Consumers
     public class SubmitOrderConsumerDefinition
         : ConsumerDefinition<SubmitOrderConsumer>
     {
+        // public SubmitOrderConsumerDefinition()
+        // {
+        //     EndpointDefinition = new ConsumerEndpointDefinition<SubmitOrderConsumer>(new EndpointSettings<IEndpointDefinition<SubmitOrderConsumer>>
+        //     {
+        //         IsTemporary = true, 
+        //         Name =$"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}{Guid.NewGuid()}" ,
+        //     });
+        // }
         protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
             IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
         {
