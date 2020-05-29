@@ -2,13 +2,21 @@ using System;
 using System.Threading.Tasks;
 using Automatonymous;
 using GreenPipes;
+using Microsoft.Extensions.Logging;
 using Sample.Contracts.Events;
 
 namespace Sample.Components.StateMachines.Activities
 {
-    public sealed class CustomerDeletedActivity 
+    public sealed class CustomerAccountClosedActivity 
         : Activity<OrderState,CustomerAccountClosedEvent>
     {
+        private readonly ILogger<CustomerAccountClosedActivity> _logger;
+
+        public CustomerAccountClosedActivity(ILogger<CustomerAccountClosedActivity> logger)
+        {
+            _logger = logger;
+        }
+        
         public void Probe(ProbeContext context)
         {
             context.CreateScope("order-cancelled");
@@ -23,7 +31,8 @@ namespace Sample.Components.StateMachines.Activities
             BehaviorContext<OrderState, CustomerAccountClosedEvent> context,
             Behavior<OrderState, CustomerAccountClosedEvent> next)
         {
-            Console.WriteLine("Execute order cancelled activity: {0} for customer {1}" , 
+            _logger
+                .LogInformation("Execute order cancelled activity: {OrderId} for customer {CustomerNumber}" , 
                 context.Instance.CorrelationId,
                 context.Data.CustomerNumber);
             await next.Execute(context).ConfigureAwait(false);

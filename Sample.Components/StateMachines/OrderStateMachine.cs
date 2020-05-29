@@ -49,7 +49,7 @@ namespace Sample.Components.StateMachines
             During(Submitted,
                 Ignore(OrderSubmitted),
                 When(AccountClosed)
-                    .Activity(x => x.OfType<CustomerDeletedActivity>())
+                    .Activity(x => x.OfType<CustomerAccountClosedActivity>())
                     .TransitionTo(Cancelled),
                 When(OrderAccepted)
                     .Activity(x => x.OfType<OrderAcceptedActivity>())

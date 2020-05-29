@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Automatonymous;
 using GreenPipes;
+using Microsoft.Extensions.Logging;
 using Sample.Contracts.Events;
 
 namespace Sample.Components.StateMachines.Activities
@@ -9,6 +10,12 @@ namespace Sample.Components.StateMachines.Activities
     public sealed class OrderAcceptedActivity 
         : Activity<OrderState,OrderAcceptedEvent>
     {
+        private readonly ILogger<OrderAcceptedActivity> _logger;
+
+        public OrderAcceptedActivity(ILogger<OrderAcceptedActivity> logger)
+        {
+            _logger = logger;
+        }
         public void Probe(ProbeContext context)
         {
             context.CreateScope("order-accepted");
@@ -23,7 +30,7 @@ namespace Sample.Components.StateMachines.Activities
             BehaviorContext<OrderState, OrderAcceptedEvent> context,
             Behavior<OrderState, OrderAcceptedEvent> next)
         {
-            Console.WriteLine("Execute order accepted activity: {0}" , 
+            _logger.LogInformation("Execute order accepted activity: {OrderId}" , 
                 context.Data.OrderId);
             await next.Execute(context).ConfigureAwait(false);
         }

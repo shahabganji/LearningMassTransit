@@ -47,7 +47,7 @@ namespace Sample.Service
                         });
 
                     services.AddHostedService<MassTransitConsoleWorker>();
-                    services.AddScoped<CustomerDeletedActivity>();
+                    services.AddScoped<CustomerAccountClosedActivity>();
                     services.AddScoped<OrderAcceptedActivity>();
                 });
 
