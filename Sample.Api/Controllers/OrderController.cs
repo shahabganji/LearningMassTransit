@@ -101,5 +101,17 @@ namespace Sample.Api.Controllers
 
             return Accepted();
         }
+        
+        [HttpPut("{id}/accept")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public async Task<IActionResult> AcceptOrder(Guid id)
+        {
+            await _bus.Publish<OrderAcceptedEvent>(new
+            {
+                OrderId = id, InVar.Timestamp
+            });
+
+            return Accepted();
+        }
     }
 }
