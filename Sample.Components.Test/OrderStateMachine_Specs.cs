@@ -86,14 +86,13 @@ namespace Sample.Components.Test
 
                 orderSaga.Consumed.Select<CheckOrderRequestedEvent>().Any().Should().BeTrue();
                 response.Message.State.Should().Be(orderStateMachine.Submitted.Name);
-
             }
             finally
             {
                 await harness.Stop();
             }
         }
-        
+
         [Fact]
         public async Task Should_cancel_order_when_account_closed()
         {
@@ -110,11 +109,11 @@ namespace Sample.Components.Test
                 {
                     OrderId = orderId,
                     InVar.Timestamp,
-                    CustomerName  = customer
+                    CustomerName = customer
                 });
 
                 saga.Created.Select(x => x.CorrelationId == orderId).Any().Should().BeTrue();
-                
+
                 var instance = await saga.Exists(orderId, x => x.Submitted);
                 instance.Should().NotBeNull();
 
@@ -132,7 +131,7 @@ namespace Sample.Components.Test
                 await harness.Stop();
             }
         }
-        
+
         [Fact]
         public async Task Should_accept_an_order()
         {
@@ -149,11 +148,11 @@ namespace Sample.Components.Test
                 {
                     OrderId = orderId,
                     InVar.Timestamp,
-                    CustomerName  = customer
+                    CustomerName = customer
                 });
 
                 saga.Created.Select(x => x.CorrelationId == orderId).Any().Should().BeTrue();
-                
+
                 var instance = await saga.Exists(orderId, x => x.Submitted);
                 instance.Should().NotBeNull();
 
@@ -172,6 +171,45 @@ namespace Sample.Components.Test
             }
         }
 
+        [Fact]
+        public async Task Should_update_info_when_submitted_after_any_other_state()
+        {
+            var harness = new InMemoryTestHarness {TestTimeout = TimeSpan.FromSeconds(3)};
+            var orderStateMachine = new OrderStateMachine();
+            var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
+
+            await harness.Start();
+            try
+            {
+                var orderId = NewId.NextGuid();
+                await harness.Bus.Publish<OrderSubmittedEvent>(new
+                {
+                    OrderId = orderId
+                });
+                await harness.Bus.Publish<OrderAcceptedEvent>(new
+                {
+                    OrderId = orderId,
+                    InVar.Timestamp,
+                });
+                var timestamp = new DateTime(2020,01,01);
+                await harness.Bus.Publish<OrderSubmittedEvent>(new
+                {
+                    OrderId = orderId,
+                    CustomerName = "CUST",
+                    Timestamp = timestamp
+                });
+
+                var instance = await saga.Exists(orderId, x => x.Submitted);
+                instance.Should().NotBeNull();
+
+                var data = saga.Sagas.Contains(orderId);
+                data.SubmitDate.Should().Be(timestamp);
+                data.CustomerNumber.Should().Be("CUST");
+            }
+            finally
+            {
+                await harness.Stop();
+            }
+        }
     }
-    
 }
