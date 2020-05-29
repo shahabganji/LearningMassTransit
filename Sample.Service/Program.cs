@@ -48,6 +48,7 @@ namespace Sample.Service
 
                     services.AddHostedService<MassTransitConsoleWorker>();
                     services.AddScoped<CustomerDeletedActivity>();
+                    services.AddScoped<OrderAcceptedActivity>();
                 });
 
             return host;

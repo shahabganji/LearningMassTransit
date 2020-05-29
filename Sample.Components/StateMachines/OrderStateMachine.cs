@@ -16,8 +16,8 @@ namespace Sample.Components.StateMachines
     {
         public OrderStateMachine()
         {
-            Event(() => OrderSubmitted,
-                x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
 
             Event(() => OrderStatusRequested,
                 x =>
@@ -50,7 +50,10 @@ namespace Sample.Components.StateMachines
                 Ignore(OrderSubmitted),
                 When(AccountClosed)
                     .Activity(x => x.OfType<CustomerDeletedActivity>())
-                    .TransitionTo(Cancelled));
+                    .TransitionTo(Cancelled),
+                When(OrderAccepted)
+                    .Activity(x=> x.OfType<OrderAcceptedActivity>())
+                    .TransitionTo(Accepted));
 
             DuringAny(When(OrderStatusRequested)
                 .RespondAsync(x => x.Init<OrderStatusResponse>(new
@@ -69,10 +72,12 @@ namespace Sample.Components.StateMachines
         }
 
         public State Submitted { get; set; }
+        public State Accepted { get; set; }
         public State Cancelled { get; set; }
 
         public Event<CustomerAccountClosedEvent> AccountClosed { get; private set; }
         public Event<OrderSubmittedEvent> OrderSubmitted { get; private set; }
+        public Event<OrderAcceptedEvent> OrderAccepted { get; private set; }
         public Event<CheckOrderRequestedEvent> OrderStatusRequested { get; private set; }
     }
 

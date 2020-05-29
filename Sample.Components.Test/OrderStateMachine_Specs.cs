@@ -132,6 +132,46 @@ namespace Sample.Components.Test
                 await harness.Stop();
             }
         }
+        
+        [Fact]
+        public async Task Should_accept_an_order()
+        {
+            var harness = new InMemoryTestHarness {TestTimeout = TimeSpan.FromSeconds(3)};
+            var orderStateMachine = new OrderStateMachine();
+            var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
+
+            await harness.Start();
+            try
+            {
+                var orderId = NewId.NextGuid();
+                var customer = "12345";
+                await harness.Bus.Publish<OrderSubmittedEvent>(new
+                {
+                    OrderId = orderId,
+                    InVar.Timestamp,
+                    CustomerName  = customer
+                });
+
+                saga.Created.Select(x => x.CorrelationId == orderId).Any().Should().BeTrue();
+                
+                var instance = await saga.Exists(orderId, x => x.Submitted);
+                instance.Should().NotBeNull();
+
+                await harness.Bus.Publish<OrderAcceptedEvent>(new
+                {
+                    OrderId = orderId,
+                    InVar.Timestamp,
+                });
+
+                instance = await saga.Exists(orderId, x => x.Accepted);
+                instance.Should().NotBeNull();
+            }
+            finally
+            {
+                await harness.Stop();
+            }
+        }
+
     }
     
 }
