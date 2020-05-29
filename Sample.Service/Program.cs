@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using MassTransit;
 using MassTransit.Definition;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
+using MassTransit.MongoDbIntegration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Sample.Components.Consumers;
 using Sample.Components.StateMachines;
+using Sample.Components.StateMachines.Activities;
 
 namespace Sample.Service
 {
@@ -36,13 +38,16 @@ namespace Sample.Service
 
                             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(
                                     typeof(OrderStateSagaDefinition))
-                                .RedisRepository(); 
-                            
+                                .MongoDbRepository(r =>
+                                {
+                                    r.Connection = "mongodb://127.0.0.1";
+                                    r.DatabaseName = "orderdb";
+                                });
                             cfg.ConfigureBus();
                         });
 
-
                     services.AddHostedService<MassTransitConsoleWorker>();
+                    services.AddScoped<CustomerDeletedActivity>();
                 });
 
             return host;
