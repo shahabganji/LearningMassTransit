@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Contracts.Events;
 
@@ -19,6 +20,7 @@ namespace Sample.Api.Controllers
         }
 
         [HttpDelete("{id}/{customerNumber}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(Guid id, string customerNumber)
         {
             await _publishEndpoint.Publish<CustomerAccountClosedEvent>(new
