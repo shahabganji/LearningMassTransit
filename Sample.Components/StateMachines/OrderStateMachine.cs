@@ -52,7 +52,7 @@ namespace Sample.Components.StateMachines
                     .Activity(x => x.OfType<CustomerDeletedActivity>())
                     .TransitionTo(Cancelled),
                 When(OrderAccepted)
-                    .Activity(x=> x.OfType<OrderAcceptedActivity>())
+                    .Activity(x => x.OfType<OrderAcceptedActivity>())
                     .TransitionTo(Accepted));
 
             DuringAny(When(OrderStatusRequested)
