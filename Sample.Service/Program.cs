@@ -75,7 +75,7 @@ namespace Sample.Service
                         // });
                         
                         // creates queues, sagas and etc.
-                        busFactoryConfigurator.ConfigureEndpoints(context.Container);
+                        busFactoryConfigurator.ConfigureEndpoints(context);
                     }));
 
 

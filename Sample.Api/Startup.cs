@@ -38,7 +38,7 @@ namespace Sample.Api
                 cfg.AddBus(context => Bus.Factory.CreateUsingRabbitMq(configure =>
                 {
                     configure.Host("localhost", "sample.api");
-                    configure.ConfigureEndpoints(context.Container);
+                    configure.ConfigureEndpoints(context);
                 }));
                 // this replaces Mediator, also adds health checks
                 services.AddMassTransitHostedService();
