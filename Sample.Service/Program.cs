@@ -9,8 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Sample.Components.Consumers;
+using Sample.Components.CourierActivities;
 using Sample.Components.StateMachines;
 using Sample.Components.StateMachines.Activities;
+using Warehouse.Contracts;
 
 namespace Sample.Service
 {
@@ -35,6 +37,10 @@ namespace Sample.Service
                         cfg =>
                         {
                             cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
+                            // adds RoutingSlip activities
+                            cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
+                            
+                            cfg.AddRequestClient<AllocateInventory>();
 
                             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(
                                     typeof(OrderStateSagaDefinition))

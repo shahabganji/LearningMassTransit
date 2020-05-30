@@ -2,7 +2,11 @@ using System;
 using System.Threading.Tasks;
 using Automatonymous;
 using GreenPipes;
+using MassTransit;
+using MassTransit.Definition;
 using Microsoft.Extensions.Logging;
+using Sample.Components.Consumers;
+using Sample.Contracts.Commands;
 using Sample.Contracts.Events;
 
 namespace Sample.Components.StateMachines.Activities
@@ -33,6 +37,17 @@ namespace Sample.Components.StateMachines.Activities
         {
             _logger.LogInformation("Execute order accepted activity: {OrderId}",
                 context.Data.OrderId);
+
+            var consumeContext = context.GetPayload<ConsumeContext>();
+            var endpoint = await consumeContext.GetSendEndpoint(
+                new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<FulfillOrderConsumer>()}")
+            );
+
+            await endpoint.Send<FulfillOrderCommand>(new
+            {
+                context.Data.OrderId
+            });
+            
             await next.Execute(context).ConfigureAwait(false);
         }
 
