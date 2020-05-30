@@ -7,8 +7,8 @@ using Sample.Contracts.Events;
 
 namespace Sample.Components.StateMachines.Activities
 {
-    public sealed class OrderAcceptedActivity 
-        : Activity<OrderState,OrderAcceptedEvent>
+    public sealed class OrderAcceptedActivity
+        : Activity<OrderState, OrderAcceptedEvent>
     {
         private readonly ILogger<OrderAcceptedActivity> _logger;
 
@@ -16,6 +16,7 @@ namespace Sample.Components.StateMachines.Activities
         {
             _logger = logger;
         }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("order-accepted");
@@ -30,12 +31,13 @@ namespace Sample.Components.StateMachines.Activities
             BehaviorContext<OrderState, OrderAcceptedEvent> context,
             Behavior<OrderState, OrderAcceptedEvent> next)
         {
-            _logger.LogInformation("Execute order accepted activity: {OrderId}" , 
+            _logger.LogInformation("Execute order accepted activity: {OrderId}",
                 context.Data.OrderId);
             await next.Execute(context).ConfigureAwait(false);
         }
 
-        public Task Faulted<TException>(BehaviorExceptionContext<OrderState, OrderAcceptedEvent, TException> context, Behavior<OrderState, OrderAcceptedEvent> next) where TException : Exception 
+        public Task Faulted<TException>(BehaviorExceptionContext<OrderState, OrderAcceptedEvent, TException> context,
+            Behavior<OrderState, OrderAcceptedEvent> next) where TException : Exception
             => next.Faulted(context);
     }
 }
