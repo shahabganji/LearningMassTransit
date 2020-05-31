@@ -15,7 +15,7 @@ namespace Sample.Components.StateMachines.Activities
         : Activity<OrderState, OrderAcceptedEvent>
     {
         private readonly ILogger<OrderAcceptedActivity> _logger;
-
+        
         public OrderAcceptedActivity(ILogger<OrderAcceptedActivity> logger)
         {
             _logger = logger;
@@ -37,12 +37,12 @@ namespace Sample.Components.StateMachines.Activities
         {
             _logger.LogInformation("Execute order accepted activity: {OrderId}",
                 context.Data.OrderId);
-
+            
             var consumeContext = context.GetPayload<ConsumeContext>();
             var endpoint = await consumeContext.GetSendEndpoint(
                 new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<FulfillOrderConsumer>()}")
             );
-
+            
             await endpoint.Send<FulfillOrderCommand>(new
             {
                 context.Data.OrderId

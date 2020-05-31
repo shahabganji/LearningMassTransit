@@ -6,6 +6,6 @@ namespace Sample.Contracts.Events
     {
         public Guid OrderId { get; }
         public DateTime? Timestamp { get;  }
-        public string CustomerName { get; set; }
+        public string CustomerNumber { get; set; }
     }
 }

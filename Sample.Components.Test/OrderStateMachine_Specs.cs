@@ -28,7 +28,7 @@ namespace Sample.Components.Test
                 {
                     OrderId = orderId,
                     InVar.Timestamp,
-                    CustomerName = "1234"
+                    CustomerNumber = "1234"
                 });
 
                 orderSaga.Created
@@ -63,7 +63,7 @@ namespace Sample.Components.Test
                 {
                     OrderId = orderId,
                     InVar.Timestamp,
-                    CustomerName = "1234"
+                    CustomerNumber = "1234"
                 });
 
                 orderSaga.Created
@@ -93,35 +93,37 @@ namespace Sample.Components.Test
         [Fact]
         public async Task Should_cancel_order_when_account_closed()
         {
-            var harness = new InMemoryTestHarness {TestTimeout = TimeSpan.FromSeconds(3)};
             var orderStateMachine = new OrderStateMachine();
+            
+            var harness = new InMemoryTestHarness();
             var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
 
             await harness.Start();
             try
             {
                 var orderId = NewId.NextGuid();
-                var customer = "12345";
+                
+                const string customerNumber = "12345";
                 await harness.Bus.Publish<OrderSubmittedEvent>(new
                 {
                     OrderId = orderId,
                     InVar.Timestamp,
-                    CustomerName = customer
+                    CustomerNumber = customerNumber
                 });
 
                 saga.Created.Select(x => x.CorrelationId == orderId).Any().Should().BeTrue();
 
-                var instance = await saga.Exists(orderId, x => x.Submitted);
-                instance.Should().NotBeNull();
+                var instanceId = await saga.Exists(orderId, x => x.Submitted);
+                instanceId.Should().NotBeNull();
 
                 await harness.Bus.Publish<CustomerAccountClosedEvent>(new
                 {
-                    CustomerId = NewId.NextGuid(),
-                    CustomerNumber = customer
+                    CustomerId = InVar.Id,
+                    CustomerNumber = customerNumber
                 });
 
-                instance = await saga.Exists(orderId, x => x.Cancelled);
-                instance.Should().NotBeNull();
+                instanceId = await saga.Exists(orderId, x => x.Cancelled);
+                instanceId.Should().NotBeNull();
             }
             finally
             {
@@ -145,7 +147,7 @@ namespace Sample.Components.Test
                 {
                     OrderId = orderId,
                     InVar.Timestamp,
-                    CustomerName = customer
+                    CustomerNumber = customer
                 });
 
                 saga.Created.Select(x => x.CorrelationId == orderId).Any().Should().BeTrue();
@@ -192,7 +194,7 @@ namespace Sample.Components.Test
                 await harness.Bus.Publish<OrderSubmittedEvent>(new
                 {
                     OrderId = orderId,
-                    CustomerName = "CUST",
+                    CustomerNumber = "CUST",
                     Timestamp = timestamp
                 });
 

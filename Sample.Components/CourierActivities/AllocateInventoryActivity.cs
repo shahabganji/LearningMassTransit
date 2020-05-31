@@ -39,6 +39,8 @@ namespace Sample.Components.CourierActivities
                 Quantity = quantity
             });
             
+            // this publishes RoutingSlipCompleted event, thus IConsumer<RoutingSlipCompleted> can consume the message,
+            // in this case, RoutingSlipConsumer
             return context.Completed<AllocateInventoryLog>(new {response.Message.AllocationId });
         }
 

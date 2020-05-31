@@ -43,7 +43,7 @@ namespace Sample.Components.Consumers
             {
                 context.Message.OrderId,
                 InVar.Timestamp,
-                CustomerName = context.Message.Customer
+                CustomerNumber = context.Message.Customer
             });
 
             if (context.RequestId != null)

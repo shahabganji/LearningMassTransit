@@ -39,13 +39,12 @@ namespace Sample.Components.StateMachines
                     .Then(context =>
                     {
                         context.Instance.SubmitDate = context.Data.Timestamp;
-                        context.Instance.CustomerNumber = context.Data.CustomerName;
+                        context.Instance.CustomerNumber = context.Data.CustomerNumber;
                         context.Instance.Updated = DateTime.UtcNow;
                     })
                     .TransitionTo(Submitted)
             );
 
-            // will say why this is significant later on.
             During(Submitted,
                 Ignore(OrderSubmitted),
                 When(AccountClosed)
@@ -67,7 +66,7 @@ namespace Sample.Components.StateMachines
             DuringAny(When(OrderSubmitted).Then(context =>
             {
                 context.Instance.SubmitDate ??= context.Data.Timestamp;
-                context.Instance.CustomerNumber ??= context.Data.CustomerName;
+                context.Instance.CustomerNumber ??= context.Data.CustomerNumber;
             }));
         }
 
