@@ -38,8 +38,10 @@ namespace Sample.Components.StateMachines
                     // copies the customer name from data/message/event to the instance of the saga
                     .Then(context =>
                     {
-                        context.Instance.SubmitDate = context.Data.Timestamp;
-                        context.Instance.CustomerNumber = context.Data.CustomerNumber;
+                        if (context.Data.Timestamp.HasValue)
+                            context.Instance.SubmitDate = context.Data.Timestamp;
+                        if (!string.IsNullOrEmpty(context.Data.CustomerNumber))
+                            context.Instance.CustomerNumber = context.Data.CustomerNumber;
                         context.Instance.Updated = DateTime.UtcNow;
                     })
                     .TransitionTo(Submitted)

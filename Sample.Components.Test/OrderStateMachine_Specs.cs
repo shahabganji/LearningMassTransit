@@ -95,7 +95,7 @@ namespace Sample.Components.Test
         {
             var orderStateMachine = new OrderStateMachine();
             
-            var harness = new InMemoryTestHarness();
+            var harness = new InMemoryTestHarness{TestTimeout = TimeSpan.FromSeconds(2)};
             var saga = harness.StateMachineSaga<OrderState, OrderStateMachine>(orderStateMachine);
 
             await harness.Start();
@@ -185,11 +185,19 @@ namespace Sample.Components.Test
                 {
                     OrderId = orderId
                 });
+                
+                var instance = await saga.Exists(orderId, x => x.Submitted);
+                instance.Should().NotBeNull();
+                
                 await harness.Bus.Publish<OrderAcceptedEvent>(new
                 {
                     OrderId = orderId,
                     InVar.Timestamp,
                 });
+                
+                instance = await saga.Exists(orderId, x => x.Accepted);
+                instance.Should().NotBeNull();
+                
                 var timestamp = new DateTime(2020,01,01);
                 await harness.Bus.Publish<OrderSubmittedEvent>(new
                 {
@@ -198,7 +206,7 @@ namespace Sample.Components.Test
                     Timestamp = timestamp
                 });
 
-                var instance = await saga.Exists(orderId, x => x.Submitted);
+                instance = await saga.Exists(orderId, x => x.Accepted);
                 instance.Should().NotBeNull();
 
                 var data = saga.Sagas.Contains(orderId);

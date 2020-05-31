@@ -163,8 +163,6 @@ namespace Sample.Components.Test
                 await harness.Stop();
             }
         }
-
-
         
     }
 }
