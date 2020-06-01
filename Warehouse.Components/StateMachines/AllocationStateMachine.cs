@@ -42,6 +42,8 @@ namespace Warehouse.Components.StateMachines
             During(Allocated, 
                 // handle the event of the HoldExpiration schedule
                 When(HoldExpiration.Received)
+                    .ThenAsync(
+                        context=> Console.Out.WriteLineAsync($"Allocation was released: {context.Data.AllocationId}"))
                     .Finalize());
             
             SetCompletedWhenFinalized();
