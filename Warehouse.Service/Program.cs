@@ -4,7 +4,7 @@ using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Warehouse.Components;
+using Warehouse.Components.Consumers;
 
 namespace Warehouse.Service
 {

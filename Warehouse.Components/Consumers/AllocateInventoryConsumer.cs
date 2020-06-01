@@ -3,7 +3,7 @@ using MassTransit;
 using Warehouse.Contracts;
 using Warehouse.Contracts.Responses;
 
-namespace Warehouse.Components
+namespace Warehouse.Components.Consumers
 {
     public class AllocateInventoryConsumer 
         : IConsumer<AllocateInventory>

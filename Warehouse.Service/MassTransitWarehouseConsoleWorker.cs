@@ -14,8 +14,8 @@ namespace Warehouse.Service
         public MassTransitWarehouseConsoleWorker(IBusControl busControl)
          => _busControl = busControl;
         
-        protected override Task ExecuteAsync(CancellationToken stoppingToken) => _busControl.StartAsync();
+        protected override Task ExecuteAsync(CancellationToken stoppingToken) => _busControl.StartAsync(stoppingToken);
 
-        public override Task StopAsync(CancellationToken cancellationToken) => _busControl.StopAsync();
+        public override Task StopAsync(CancellationToken cancellationToken) => _busControl.StopAsync(cancellationToken);
     }
 }
