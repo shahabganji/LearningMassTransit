@@ -22,6 +22,7 @@ namespace Warehouse.Components.StateMachines
 
                 // a schedule has an event, Received which is ofType<AllocationHoldDurationExpired>,
                 // in it so no need to define it in that state machine again
+                // can be configured just like the way for regular events, Event(() => eventName, ....)
                 holdDurationCancellationToken.Received = x => x.CorrelateById(m => m.Message.AllocationId);
             });
             
