@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Warehouse.Contracts
+namespace Warehouse.Contracts.Commands
 {
-    public interface AllocateInventory
+    public interface AllocateInventoryCommand
     {
         Guid AllocationId { get; }
         

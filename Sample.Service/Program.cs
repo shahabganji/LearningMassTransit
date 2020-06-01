@@ -12,7 +12,7 @@ using Sample.Components.Consumers;
 using Sample.Components.CourierActivities;
 using Sample.Components.StateMachines;
 using Sample.Components.StateMachines.Activities;
-using Warehouse.Contracts;
+using Warehouse.Contracts.Commands;
 
 namespace Sample.Service
 {
@@ -40,7 +40,7 @@ namespace Sample.Service
                             // adds RoutingSlip activities
                             cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
                             
-                            cfg.AddRequestClient<AllocateInventory>();
+                            cfg.AddRequestClient<AllocateInventoryCommand>();
 
                             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(
                                     typeof(OrderStateSagaDefinition))

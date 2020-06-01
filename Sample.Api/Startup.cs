@@ -24,6 +24,9 @@ namespace Sample.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // this replaces Mediator, also adds health checks
+            services.AddMassTransitHostedService();
+            services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
             services.AddMassTransit(cfg =>
             {
                 // adds the consumer of a contract/message as SCOPED 
@@ -34,14 +37,11 @@ namespace Sample.Api
                 // ~= 650K messages/sec
                 // cfg.AddMediator();
                 
-                services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
                 cfg.AddBus(context => Bus.Factory.CreateUsingRabbitMq(configure =>
                 {
                     configure.Host("localhost", "sample.api");
                     configure.ConfigureEndpoints(context);
                 }));
-                // this replaces Mediator, also adds health checks
-                services.AddMassTransitHostedService();
 
                 // adds a client that knows how to send a request to an endpoint, this endpoint should be the same 
                 // as the endpoint set for the consumer, either manually or by formatters
@@ -49,7 +49,6 @@ namespace Sample.Api
                     // new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
                     
                 cfg.AddRequestClient<CheckOrderRequestedEvent>();
-                
             });
 
             services.AddOpenApiDocument(settings => settings.Title = "Sample Api" );

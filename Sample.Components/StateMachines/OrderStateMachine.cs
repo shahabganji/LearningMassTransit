@@ -82,9 +82,9 @@ namespace Sample.Components.StateMachines
         public Event<CheckOrderRequestedEvent> OrderStatusRequested { get; private set; }
     }
 
-    public class OrderState
-        : SagaStateMachineInstance
-            , IVersionedSaga
+    public class OrderState :
+        SagaStateMachineInstance
+        , IVersionedSaga
     {
         [BsonId] public Guid CorrelationId { get; set; }
         public string CurrentState { get; set; } // current state of the saga

@@ -1,8 +1,8 @@
 using System;
 
-namespace Warehouse.Contracts
+namespace Warehouse.Contracts.Events
 {
-    public interface AllocationReleaseRequested
+    public interface AllocationReleaseRequestedEvent
     {
         Guid AllocationId { get; }
         string Reason { get; }

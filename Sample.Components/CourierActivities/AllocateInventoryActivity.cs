@@ -3,7 +3,8 @@ using System.Data;
 using System.Threading.Tasks;
 using MassTransit;
 using MassTransit.Courier;
-using Warehouse.Contracts;
+using Warehouse.Contracts.Commands;
+using Warehouse.Contracts.Events;
 using Warehouse.Contracts.Responses;
 
 namespace Sample.Components.CourierActivities
@@ -11,9 +12,9 @@ namespace Sample.Components.CourierActivities
     public sealed class AllocateInventoryActivity
         : IActivity<AllocateInventoryArguments, AllocateInventoryLog>
     {
-        private readonly IRequestClient<AllocateInventory> _client;
+        private readonly IRequestClient<AllocateInventoryCommand> _client;
 
-        public AllocateInventoryActivity(IRequestClient<AllocateInventory> client)
+        public AllocateInventoryActivity(IRequestClient<AllocateInventoryCommand> client)
         {
             _client = client;
         }
@@ -46,7 +47,7 @@ namespace Sample.Components.CourierActivities
 
         public async Task<CompensationResult> Compensate(CompensateContext<AllocateInventoryLog> context)
         {
-            await context.Publish<AllocationReleaseRequested>(new
+            await context.Publish<AllocationReleaseRequestedEvent>(new
             {
                 context.Log.AllocationId,
                 Reason = "Order faulted"
