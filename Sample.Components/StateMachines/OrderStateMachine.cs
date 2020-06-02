@@ -56,20 +56,23 @@ namespace Sample.Components.StateMachines
                     .Activity(x => x.OfType<OrderAcceptedActivity>())
                     .TransitionTo(Accepted));
 
-            DuringAny(When(OrderStatusRequested)
-                .RespondAsync(x => x.Init<OrderStatusResponse>(new
-                {
-                    OrderId = x.Instance.CorrelationId,
-                    State = x.Instance.CurrentState
-                })));
+            DuringAny(
+                When(OrderStatusRequested)
+                    .RespondAsync(x => x.Init<OrderStatusResponse>(new
+                    {
+                        OrderId = x.Instance.CorrelationId,
+                        State = x.Instance.CurrentState
+                    })));
 
             // during any event, except initial & final,
             // if an OrderSubmitted event fired then do the following
-            DuringAny(When(OrderSubmitted).Then(context =>
-            {
-                context.Instance.SubmitDate ??= context.Data.Timestamp;
-                context.Instance.CustomerNumber ??= context.Data.CustomerNumber;
-            }));
+            DuringAny(
+                When(OrderSubmitted)
+                    .Then(context =>
+                    {
+                        context.Instance.SubmitDate ??= context.Data.Timestamp;
+                        context.Instance.CustomerNumber ??= context.Data.CustomerNumber;
+                    }));
         }
 
         public State Submitted { get; set; }

@@ -14,12 +14,12 @@ namespace Sample.Components.StateMachines.Activities
     public sealed class OrderAcceptedActivity
         : Activity<OrderState, OrderAcceptedEvent>
     {
-        private readonly ILogger<OrderAcceptedActivity> _logger;
-        
-        public OrderAcceptedActivity(ILogger<OrderAcceptedActivity> logger)
-        {
-            _logger = logger;
-        }
+        // private readonly ILogger<OrderAcceptedActivity> _logger;
+        //
+        // public OrderAcceptedActivity(ILogger<OrderAcceptedActivity> logger)
+        // {
+        //     _logger = logger;
+        // }
 
         public void Probe(ProbeContext context)
         {
@@ -35,8 +35,8 @@ namespace Sample.Components.StateMachines.Activities
             BehaviorContext<OrderState, OrderAcceptedEvent> context,
             Behavior<OrderState, OrderAcceptedEvent> next)
         {
-            _logger.LogInformation("Execute order accepted activity: {OrderId}",
-                context.Data.OrderId);
+            // _logger.LogInformation("Execute order accepted activity: {OrderId}",
+            //     context.Data.OrderId);
             
             var consumeContext = context.GetPayload<ConsumeContext>();
             var endpoint = await consumeContext.GetSendEndpoint(

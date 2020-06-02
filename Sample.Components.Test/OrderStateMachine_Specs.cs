@@ -180,7 +180,7 @@ namespace Sample.Components.Test
             await harness.Start();
             try
             {
-                var orderId = NewId.NextGuid();
+                var orderId = Guid.NewGuid();
                 await harness.Bus.Publish<OrderSubmittedEvent>(new
                 {
                     OrderId = orderId
@@ -202,7 +202,7 @@ namespace Sample.Components.Test
                 await harness.Bus.Publish<OrderSubmittedEvent>(new
                 {
                     OrderId = orderId,
-                    CustomerNumber = "CUST",
+                    CustomerNumber = "0987",
                     Timestamp = timestamp
                 });
 
@@ -211,7 +211,7 @@ namespace Sample.Components.Test
 
                 var data = saga.Sagas.Contains(orderId);
                 data.SubmitDate.Should().Be(timestamp);
-                data.CustomerNumber.Should().Be("CUST");
+                data.CustomerNumber.Should().Be("0987");
             }
             finally
             {
