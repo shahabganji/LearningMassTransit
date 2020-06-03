@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Automatonymous;
 using GreenPipes;
-using Microsoft.Extensions.Logging;
 using Sample.Contracts.Events;
 
 namespace Sample.Components.StateMachines.Activities

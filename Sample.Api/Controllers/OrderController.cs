@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using MassTransit;
 using MassTransit.Definition;
@@ -66,13 +67,13 @@ namespace Sample.Api.Controllers
                         Customer = customerNumber,
                         InVar.Timestamp
                     });
-
+            
             if (accepted.IsCompletedSuccessfully)
             {
                 var response = await accepted;
                 return Accepted(response.Message);
             }
-
+            
             var rejectedResponse = await rejected;
             return BadRequest(rejectedResponse.Message);
         }

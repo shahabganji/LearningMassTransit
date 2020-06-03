@@ -5,15 +5,48 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit.Analyzers" Version="6.3.2" />
-      <PackageReference Include="MassTransit.AspNetCore" Version="6.3.2" />
-      <PackageReference Include="MassTransit.RabbitMQ" Version="6.3.2" />
-      <PackageReference Include="NSwag.AspNetCore" Version="13.5.0" />
+        <PackageReference Include="MassTransit.Analyzers" Version="6.3.2" />
+        <PackageReference Include="MassTransit.AspNetCore" Version="6.3.2" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="6.3.2" />
+        <PackageReference Include="NSwag.AspNetCore" Version="13.5.0" />
+
+        <PackageReference Include="OpenTelemetry" Version="0.2.0-alpha.112" />
+        <PackageReference Include="OpenTelemetry.Hosting" Version="0.2.0-alpha.112" />
+        <PackageReference Include="OpenTelemetry.Collector.AspNetCore" Version="0.2.0-alpha.112" />
+        <PackageReference Include="OpenTelemetry.Collector.Dependencies" Version="0.2.0-alpha.112" />
+        <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="0.2.0-alpha.112" />
+        <PackageReference Include="OpenTelemetry.Exporter.Prometheus" Version="0.2.0-alpha.112" />
+        
+        <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="3.1.0" />
+        
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Sample.Components\Sample.Components.csproj" />
-      <ProjectReference Include="..\Sample.Contracts\Sample.Contracts.csproj" />
+        <ProjectReference Include="..\Sample.Components\Sample.Components.csproj" />
+        <ProjectReference Include="..\Sample.Contracts\Sample.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="serilog.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+      <Content Update="serilog.Development.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <DependentUpon>logger.json</DependentUpon>
+      </Content>
+      <Content Update="serilog.Production.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <DependentUpon>logger.json</DependentUpon>
+      </Content>
     </ItemGroup>
 
 

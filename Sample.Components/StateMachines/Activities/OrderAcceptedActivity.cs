@@ -4,7 +4,6 @@ using Automatonymous;
 using GreenPipes;
 using MassTransit;
 using MassTransit.Definition;
-using Microsoft.Extensions.Logging;
 using Sample.Components.Consumers;
 using Sample.Contracts.Commands;
 using Sample.Contracts.Events;

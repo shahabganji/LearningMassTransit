@@ -1,10 +1,8 @@
 using System;
-using System.Threading;
 using Automatonymous;
 using MassTransit;
 using MassTransit.MongoDbIntegration.Saga;
 using MongoDB.Bson.Serialization.Attributes;
-using Warehouse.Contracts;
 using Warehouse.Contracts.Events;
 
 namespace Warehouse.Components.StateMachines
