@@ -1,6 +1,7 @@
 using System;
 using MassTransit;
 using MassTransit.Definition;
+using MassTransit.PrometheusIntegration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Trace.Configuration;
+using Prometheus;
+using Prometheus.HttpMetrics;
 using Sample.Contracts.Commands;
 using Sample.Contracts.Events;
 
@@ -65,6 +68,8 @@ namespace Sample.Api
                 {
                     configure.Host("localhost", "sample.api");
                     configure.ConfigureEndpoints(context);
+                    
+                    configure.UsePrometheusMetrics(serviceName:"mt-sample-api");
                 }));
 
                 // adds a client that knows how to send a request to an endpoint, this endpoint should be the same 
@@ -94,10 +99,16 @@ namespace Sample.Api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseHttpMetrics();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapMetrics("/metrics/all");
+                // endpoints.MapMetrics("/metrics/mt");
+            });
         }
     }
 }

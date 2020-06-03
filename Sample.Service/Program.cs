@@ -20,6 +20,8 @@ namespace Sample.Service
     {
         public static async Task Main(string[] args)
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+
             var isService = Debugger.IsAttached || args.Contains("--console");
 
             var host = CreateHostBuilder(args);
@@ -32,14 +34,28 @@ namespace Sample.Service
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    // services.AddOpenTelemetry(configurator =>
+                    // {
+
+                    //     configurator.UseZipkin(builder =>
+                    //     {
+                    //         builder.ServiceName = "mt-sample-service";
+                    //         builder.Endpoint = new Uri("http://localhost:9411/api/v2/spans");
+                    //     });
+                    //
+                    //     configurator.AddDependencyCollector();
+                    // });
+
                     services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
                     services.AddMassTransit(
                         cfg =>
                         {
+                            cfg.SetKebabCaseEndpointNameFormatter();
+
                             cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
                             // adds RoutingSlip activities
                             cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
-                            
+
                             cfg.AddRequestClient<AllocateInventoryCommand>();
 
                             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(
@@ -70,7 +86,7 @@ namespace Sample.Service
                     busFactoryConfigurator =>
                     {
                         var host = busFactoryConfigurator.Host("localhost", "sample.api");
-                        
+
                         // // we could set a consumer here by using ReceiveEndpoint,
                         // // or use the extension method of AddConsumer* on IServiceCollectionConfigurator
                         // // it is also possible to configure endpoint by xDefinitions, e.g. SagaDefinition<T>
@@ -85,7 +101,7 @@ namespace Sample.Service
                         //     e.Consumer(
                         //         () => new SubmitOrderConsumer(context.Container.GetService<ILogger<SubmitOrderConsumer>>()));
                         // });
-                        
+
                         // creates queues, sagas and etc.
                         busFactoryConfigurator.ConfigureEndpoints(context);
                     }));
