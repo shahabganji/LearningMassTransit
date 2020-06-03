@@ -21,10 +21,35 @@
         <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="0.2.0-alpha.112" />
         <PackageReference Include="OpenTelemetry.Exporter.Prometheus" Version="0.2.0-alpha.112" />
         <PackageReference Include="prometheus-net.AspNetCore" Version="3.5.0" />
+
+        <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="3.1.0" />
         
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Sample.Components\Sample.Components.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="serilog.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+      <Content Update="serilog.Development.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <DependentUpon>serilog.json</DependentUpon>
+      </Content>
+      <Content Update="serilog.Production.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <DependentUpon>serilog.json</DependentUpon>
+      </Content>
     </ItemGroup>
 </Project>

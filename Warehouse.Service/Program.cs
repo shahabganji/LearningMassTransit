@@ -3,9 +3,11 @@ using MassTransit;
 using MassTransit.Definition;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MassTransit.MongoDbIntegration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using Warehouse.Components.Consumers;
 using Warehouse.Components.StateMachines;
 
@@ -21,6 +23,17 @@ namespace Warehouse.Service
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var host = Host.CreateDefaultBuilder(args)
+                .ConfigureLogging((context, builder) =>
+                {
+                    var configuration = new ConfigurationBuilder()
+                        .AddJsonFile("serilog.json",false, true)
+                        .AddJsonFile($"serilog.{context.HostingEnvironment.EnvironmentName}.json", true, true)
+                        .Build();
+                    var logger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(configuration)
+                        .CreateLogger();
+                    builder.AddSerilog(logger, dispose: true);
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);

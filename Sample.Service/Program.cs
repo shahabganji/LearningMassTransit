@@ -5,6 +5,7 @@ using MassTransit;
 using MassTransit.Definition;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MassTransit.MongoDbIntegration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +13,7 @@ using Sample.Components.Consumers;
 using Sample.Components.CourierActivities;
 using Sample.Components.StateMachines;
 using Sample.Components.StateMachines.Activities;
+using Serilog;
 using Warehouse.Contracts.Commands;
 
 namespace Sample.Service
@@ -32,6 +34,17 @@ namespace Sample.Service
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var host = Host.CreateDefaultBuilder(args)
+                .ConfigureLogging((context, builder) =>
+                {
+                    var configuration = new ConfigurationBuilder()
+                        .AddJsonFile("serilog.json",false, true)
+                        .AddJsonFile($"serilog.{context.HostingEnvironment.EnvironmentName}.json", true, true)
+                        .Build();
+                    var logger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(configuration)
+                        .CreateLogger();
+                    builder.AddSerilog(logger, dispose: true);
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
                     // services.AddOpenTelemetry(configurator =>
