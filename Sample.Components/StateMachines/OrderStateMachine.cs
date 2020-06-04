@@ -1,11 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Automatonymous;
-using GreenPipes;
 using MassTransit;
-using MassTransit.Definition;
-using MassTransit.MongoDbIntegration.Saga;
-using MongoDB.Bson.Serialization.Attributes;
 using Sample.Components.StateMachines.Activities;
 using Sample.Contracts.Events;
 using Sample.Contracts.Responses;
@@ -91,30 +87,5 @@ namespace Sample.Components.StateMachines
         public Event<OrderAcceptedEvent> OrderAccepted { get; private set; }
         public Event<CheckOrderRequestedEvent> OrderStatusRequested { get; private set;}
         public Event<OrderFulfillmentFaulted> FulfillmentFaulted { get; private set;}
-    }
-
-    public class OrderState :
-        SagaStateMachineInstance
-        , IVersionedSaga
-    {
-        [BsonId] public Guid CorrelationId { get; set; }
-        public string CurrentState { get; set; } // current state of the saga
-
-        // data to be stored
-        public string CustomerNumber { get; set; }
-        public DateTime Updated { get; set; }
-        public DateTime? SubmitDate { get; set; }
-        public int Version { get; set; }
-    }
-
-    public class OrderStateSagaDefinition
-        : SagaDefinition<OrderState>
-    {
-        protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator,
-            ISagaConfigurator<OrderState> sagaConfigurator)
-        {
-            endpointConfigurator.UseMessageRetry(r => r.Intervals(500, 5000, 10000));
-            endpointConfigurator.UseInMemoryOutbox();
-        }
     }
 }

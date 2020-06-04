@@ -26,7 +26,7 @@ namespace Sample.Components.Consumers
                 Quantity = 10.0m
             });
 
-            builder.AddActivity("Payment",
+            builder.AddActivity("PaymentActivity",
                 new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.SanitizeName("payment")}_execute"),
                 new
                 {

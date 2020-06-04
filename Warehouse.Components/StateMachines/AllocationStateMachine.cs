@@ -1,8 +1,6 @@
 using System;
 using Automatonymous;
 using MassTransit;
-using MassTransit.MongoDbIntegration.Saga;
-using MongoDB.Bson.Serialization.Attributes;
 using Warehouse.Contracts.Events;
 
 namespace Warehouse.Components.StateMachines
@@ -33,12 +31,12 @@ namespace Warehouse.Components.StateMachines
                         // create a message
                         context => context.Init<AllocationHoldDurationExpiredEvent>(
                             new {context.Data.AllocationId}),
-                        sendContext => sendContext.Data.HoldDuration)
+                        delayProvider: sendContext => sendContext.Data.HoldDuration)
                     .TransitionTo(Allocated),
                 When(ReleaseRequested)
                     .TransitionTo(Released)
             );
-            
+
             During(Allocated, // the message is delivered the second time due to failures in broker being down 
                 When(AllocationCreated)
                     .Schedule(
@@ -46,7 +44,7 @@ namespace Warehouse.Components.StateMachines
                         // create a message
                         context => context.Init<AllocationHoldDurationExpiredEvent>(
                             new {context.Data.AllocationId}),
-                        sendContext => sendContext.Data.HoldDuration));
+                        delayProvider: sendContext => sendContext.Data.HoldDuration));
 
             During(Released,
                 When(AllocationCreated)
@@ -62,7 +60,6 @@ namespace Warehouse.Components.StateMachines
                     .ThenAsync(
                         context => Console.Out.WriteLineAsync($"Allocation expired: {context.Data.AllocationId}"))
                     .Finalize(),
-                
                 When(ReleaseRequested)
                     .Unschedule(HoldExpiration)
                     .ThenAsync(
@@ -83,18 +80,5 @@ namespace Warehouse.Components.StateMachines
 
         public Event<AllocationCreatedEvent> AllocationCreated { get; set; }
         public Event<AllocationReleaseRequestedEvent> ReleaseRequested { get; set; }
-    }
-
-
-    public sealed class AllocationState :
-        SagaStateMachineInstance,
-        IVersionedSaga
-    {
-        [BsonId] public Guid CorrelationId { get; set; }
-        public int Version { get; set; }
-
-        public string CurrentState { get; set; }
-
-        public Guid? HoldDurationToken { get; set; }
     }
 }
