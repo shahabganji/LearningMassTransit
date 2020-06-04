@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Automatonymous;
 using GreenPipes;
 using MassTransit;
@@ -11,14 +12,19 @@ using Sample.Contracts.Responses;
 
 namespace Sample.Components.StateMachines
 {
+    [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
     public sealed class OrderStateMachine
         : MassTransitStateMachine<OrderState>
     {
         public OrderStateMachine()
         {
+            InstanceState(x => x.CurrentState);
+            
             Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
-
+            Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => AccountClosed,
+                x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
             Event(() => OrderStatusRequested,
                 x =>
                 {
@@ -28,11 +34,7 @@ namespace Sample.Components.StateMachines
                         await context.RespondAsync<OrderNotFoundResponse>(new {context.Message.OrderId});
                     }));
                 });
-            Event(() => AccountClosed,
-                x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
-
-            InstanceState(x => x.CurrentState);
-
+            
             Initially(
                 When(OrderSubmitted)
                     // copies the customer name from data/message/event to the instance of the saga
@@ -56,6 +58,10 @@ namespace Sample.Components.StateMachines
                     .Activity(x => x.OfType<OrderAcceptedActivity>())
                     .TransitionTo(Accepted));
 
+            During(Accepted, 
+                When(FulfillmentFaulted)
+                    .TransitionTo(Faulted));
+            
             DuringAny(
                 When(OrderStatusRequested)
                     .RespondAsync(x => x.Init<OrderStatusResponse>(new
@@ -75,14 +81,16 @@ namespace Sample.Components.StateMachines
                     }));
         }
 
-        public State Submitted { get; set; }
-        public State Accepted { get; set; }
-        public State Cancelled { get; set; }
+        public State Submitted { get; private set; }
+        public State Accepted { get; private set; }
+        public State Cancelled { get; private set;}
+        public State Faulted { get;private set; }
 
         public Event<CustomerAccountClosedEvent> AccountClosed { get; private set; }
-        public Event<OrderSubmittedEvent> OrderSubmitted { get; private set; }
+        public Event<OrderSubmittedEvent> OrderSubmitted { get;private set; }
         public Event<OrderAcceptedEvent> OrderAccepted { get; private set; }
-        public Event<CheckOrderRequestedEvent> OrderStatusRequested { get; private set; }
+        public Event<CheckOrderRequestedEvent> OrderStatusRequested { get; private set;}
+        public Event<OrderFulfillmentFaulted> FulfillmentFaulted { get; private set;}
     }
 
     public class OrderState :
