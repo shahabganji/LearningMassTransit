@@ -7,14 +7,15 @@ using Warehouse.Contracts.Events;
 
 namespace Warehouse.Components.StateMachines
 {
-    public sealed class AllocationStateMachine : 
+    public sealed class AllocationStateMachine :
         MassTransitStateMachine<AllocationState>
     {
         public AllocationStateMachine()
         {
             InstanceState(x => x.CurrentState);
-            Event(() => AllocationCreated , x=> x.CorrelateById(m => m.Message.AllocationId) );
-            Schedule(() => HoldExpiration , state => state.HoldDurationToken , holdDurationCancellationToken =>
+            Event(() => AllocationCreated, x => x.CorrelateById(m => m.Message.AllocationId));
+            Event(() => ReleaseRequested, x => x.CorrelateById(m => m.Message.AllocationId));
+            Schedule(() => HoldExpiration, state => state.HoldDurationToken, holdDurationCancellationToken =>
             {
                 holdDurationCancellationToken.Delay = TimeSpan.FromHours(1);
 
@@ -23,7 +24,7 @@ namespace Warehouse.Components.StateMachines
                 // can be configured just like the way for regular events, Event(() => eventName, ....)
                 holdDurationCancellationToken.Received = x => x.CorrelateById(m => m.Message.AllocationId);
             });
-            
+
             Initially(
                 When(AllocationCreated)
                     // set the schedule, we need to handle its event later on 
@@ -32,29 +33,56 @@ namespace Warehouse.Components.StateMachines
                         // create a message
                         context => context.Init<AllocationHoldDurationExpiredEvent>(
                             new {context.Data.AllocationId}),
-                        
-                        sendContext => sendContext.Data.HoldDuration )
-                    .TransitionTo(Allocated)
-                );
+                        sendContext => sendContext.Data.HoldDuration)
+                    .TransitionTo(Allocated),
+                When(ReleaseRequested)
+                    .TransitionTo(Released)
+            );
             
-            During(Allocated, 
-                // handle the event of the HoldExpiration schedule
+            During(Allocated, // the message is delivered the second time due to failures in broker being down 
+                When(AllocationCreated)
+                    .Schedule(
+                        HoldExpiration,
+                        // create a message
+                        context => context.Init<AllocationHoldDurationExpiredEvent>(
+                            new {context.Data.AllocationId}),
+                        sendContext => sendContext.Data.HoldDuration));
+
+            During(Released,
+                When(AllocationCreated)
+                    .ThenAsync(
+                        context => Console.Out.WriteLineAsync(
+                            $"Allocation is already released: {context.Data.AllocationId}"))
+                    .Finalize()
+            );
+
+            During(Allocated,
+                // handles the event of the HoldExpiration schedule
                 When(HoldExpiration.Received)
                     .ThenAsync(
-                        context=> Console.Out.WriteLineAsync($"Allocation was released: {context.Data.AllocationId}"))
-                    .Finalize());
-            
-            SetCompletedWhenFinalized();
+                        context => Console.Out.WriteLineAsync($"Allocation expired: {context.Data.AllocationId}"))
+                    .Finalize(),
+                
+                When(ReleaseRequested)
+                    .Unschedule(HoldExpiration)
+                    .ThenAsync(
+                        context => Console.Out.WriteLineAsync(
+                            $"Allocation release request, granted: {context.Data.AllocationId}"))
+                    .Finalize()
+            );
 
+            SetCompletedWhenFinalized();
         }
+
 
         // the second generic parameter is the event type for the schedule
         public Schedule<AllocationState, AllocationHoldDurationExpiredEvent> HoldExpiration { get; set; }
-        
+
         public State Allocated { get; set; }
-        
-        public Event<AllocationCreatedEvent> AllocationCreated { get; set; } 
-        
+        public State Released { get; set; }
+
+        public Event<AllocationCreatedEvent> AllocationCreated { get; set; }
+        public Event<AllocationReleaseRequestedEvent> ReleaseRequested { get; set; }
     }
 
 
@@ -62,12 +90,11 @@ namespace Warehouse.Components.StateMachines
         SagaStateMachineInstance,
         IVersionedSaga
     {
-        [BsonId]
-        public Guid CorrelationId { get; set; }
+        [BsonId] public Guid CorrelationId { get; set; }
         public int Version { get; set; }
-        
+
         public string CurrentState { get; set; }
-        
+
         public Guid? HoldDurationToken { get; set; }
     }
 }

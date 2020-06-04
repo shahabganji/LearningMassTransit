@@ -23,7 +23,16 @@ namespace Sample.Components.Consumers
                 ItemNumber = "Item123",
                 Quantity = 10.0m
             });
+            
+            builder.AddActivity("Payment",
+                new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.SanitizeName("payment")}_execute"),
+                new
+                {
+                    Amount = 99.95m , 
+                    CardNumber = "5999-1234-5678-9012"
+                });
 
+            // implicit setting the OrderId property on all activities that have that value in their argument type 
             builder.AddVariable("OrderId", context.Message.OrderId);
 
             var routingSlip = builder.Build();

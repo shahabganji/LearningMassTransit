@@ -1,6 +1,6 @@
 using System;
 
-namespace Sample.Components.CourierActivities
+namespace Sample.Components.CourierActivities.Arguments
 {
     public interface AllocateInventoryArguments
     {

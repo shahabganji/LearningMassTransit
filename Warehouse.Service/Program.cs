@@ -26,7 +26,7 @@ namespace Warehouse.Service
                 .ConfigureLogging((context, builder) =>
                 {
                     var configuration = new ConfigurationBuilder()
-                        .AddJsonFile("serilog.json",false, true)
+                        .AddJsonFile("serilog.json", false, true)
                         .AddJsonFile($"serilog.{context.HostingEnvironment.EnvironmentName}.json", true, true)
                         .Build();
                     var logger = new LoggerConfiguration()
@@ -37,19 +37,20 @@ namespace Warehouse.Service
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
-                    
+
                     services.AddMassTransit(
                         cfg =>
                         {
                             cfg.AddConsumersFromNamespaceContaining<AllocateInventoryConsumer>();
 
-                            cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>()
+                            cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>(
+                                    typeof(AllocateStateMachineDefinition))
                                 .MongoDbRepository(r =>
                                 {
                                     r.Connection = "mongodb://127.0.0.1";
                                     r.DatabaseName = "allocations";
                                 });
-                            
+
                             cfg.ConfigureBus();
                         });
 
@@ -59,7 +60,7 @@ namespace Warehouse.Service
             return host;
         }
     }
-    
+
     public static class SampleServiceExtensions
     {
         public static IServiceCollectionConfigurator ConfigureBus(this IServiceCollectionConfigurator configurator)
@@ -72,7 +73,7 @@ namespace Warehouse.Service
 
                         // when using scheduler this line should be added
                         busFactoryConfigurator.UseMessageScheduler(new Uri("rabbitmq://localhost/quartz-scheduler"));
-                        
+
                         busFactoryConfigurator.ConfigureEndpoints(context);
                     }));
 

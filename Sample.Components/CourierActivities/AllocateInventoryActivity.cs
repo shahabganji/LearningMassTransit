@@ -3,6 +3,8 @@ using System.Data;
 using System.Threading.Tasks;
 using MassTransit;
 using MassTransit.Courier;
+using Sample.Components.CourierActivities.Arguments;
+using Sample.Components.CourierActivities.Logs;
 using Warehouse.Contracts.Commands;
 using Warehouse.Contracts.Events;
 using Warehouse.Contracts.Responses;
@@ -24,7 +26,7 @@ namespace Sample.Components.CourierActivities
             var orderId = context.Arguments.OrderId;
 
             var itemNumber = context.Arguments.ItemNumber;
-            if( string.IsNullOrEmpty(itemNumber) )
+            if( string.IsNullOrEmpty(itemNumber) ) 
                 throw  new NoNullAllowedException($"{nameof(itemNumber)}");
             
             var quantity = context.Arguments.Quantity;
