@@ -73,7 +73,7 @@ namespace Sample.Api
                 // adds a client that knows how to send a request to an endpoint, this endpoint should be the same 
                 // as the endpoint set for the consumer, either manually or by formatters
                 cfg.AddRequestClient<SubmitOrderCommand>(new Uri("queue:submit-order"));
-                // new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
+                // new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
 
                 cfg.AddRequestClient<CheckOrderRequestedEvent>();
             });

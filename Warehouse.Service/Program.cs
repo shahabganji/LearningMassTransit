@@ -72,7 +72,7 @@ namespace Warehouse.Service
                         var host = busFactoryConfigurator.Host("localhost", "sample.api");
 
                         // when using scheduler this line should be added
-                        busFactoryConfigurator.UseMessageScheduler(new Uri("rabbitmq://localhost/quartz-scheduler"));
+                        busFactoryConfigurator.UseMessageScheduler(new Uri("queue:quartz-scheduler"));
 
                         busFactoryConfigurator.ConfigureEndpoints(context);
                     }));

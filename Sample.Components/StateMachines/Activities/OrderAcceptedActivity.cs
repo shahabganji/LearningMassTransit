@@ -39,7 +39,7 @@ namespace Sample.Components.StateMachines.Activities
             
             var consumeContext = context.GetPayload<ConsumeContext>();
             var endpoint = await consumeContext.GetSendEndpoint(
-                new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<FulfillOrderConsumer>()}")
+                new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<FulfillOrderConsumer>()}")
             );
             
             await endpoint.Send<FulfillOrderCommand>(new
