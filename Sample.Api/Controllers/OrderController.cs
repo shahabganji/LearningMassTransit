@@ -56,7 +56,7 @@ namespace Sample.Api.Controllers
         [HttpPost("{id}/{customerNumber}")]
         [ProducesResponseType(typeof(OrderSubmissionAcceptedResponse), StatusCodes.Status202Accepted)]
         [ProducesResponseType(typeof(OrderSubmissionRejectedResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post(Guid id, string customerNumber)
+        public async Task<IActionResult> Post(Guid id, string customerNumber, string paymentCardNumber)
         {
             // the default timeout is 30 sec
             var (accepted, rejected) =
@@ -65,7 +65,8 @@ namespace Sample.Api.Controllers
                     {
                         OrderId = id,
                         Customer = customerNumber,
-                        InVar.Timestamp
+                        InVar.Timestamp,
+                        PaymentCardNumber = paymentCardNumber
                     });
             
             if (accepted.IsCompletedSuccessfully)

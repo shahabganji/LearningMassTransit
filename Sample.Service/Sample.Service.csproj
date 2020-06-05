@@ -14,12 +14,13 @@
         <PackageReference Include="MassTransit.Prometheus" Version="6.3.2" />
         <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="6.3.2" />
 
-        <PackageReference Include="OpenTelemetry" Version="0.2.0-alpha.112" />
-        <PackageReference Include="OpenTelemetry.Hosting" Version="0.2.0-alpha.112" />
-        <PackageReference Include="OpenTelemetry.Collector.AspNetCore" Version="0.2.0-alpha.112" />
-        <PackageReference Include="OpenTelemetry.Collector.Dependencies" Version="0.2.0-alpha.112" />
-        <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="0.2.0-alpha.112" />
-        <PackageReference Include="OpenTelemetry.Exporter.Prometheus" Version="0.2.0-alpha.112" />
+<!--        <PackageReference Include="OpenTelemetry" Version="0.2.0-alpha.112" />-->
+<!--        <PackageReference Include="OpenTelemetry.Hosting" Version="0.2.0-alpha.112" />-->
+<!--        <PackageReference Include="OpenTelemetry.Collector.AspNetCore" Version="0.2.0-alpha.112" />-->
+<!--        <PackageReference Include="OpenTelemetry.Collector.Dependencies" Version="0.2.0-alpha.112" />-->
+<!--        <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="0.2.0-alpha.112" />-->
+<!--        <PackageReference Include="OpenTelemetry.Exporter.Prometheus" Version="0.2.0-alpha.112" />-->
+        
         <PackageReference Include="prometheus-net.AspNetCore" Version="3.5.0" />
 
         <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />

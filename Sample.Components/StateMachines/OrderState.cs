@@ -14,6 +14,7 @@ namespace Sample.Components.StateMachines
 
         // data to be stored
         public string CustomerNumber { get; set; }
+        public string PaymentCardNumber { get; set; }
         public DateTime Updated { get; set; }
         public DateTime? SubmitDate { get; set; }
         public int Version { get; set; }

@@ -31,12 +31,22 @@ namespace Sample.Components.Consumers
                 new
                 {
                     Amount = 99.95m,
-                    CardNumber = "5999-1234-5678-9012"
+                    CardNumber =
+                        context.Message.PaymentCardNumber ?? "5999-1234-5678-9012" // pertain the previous behavior
                 });
- 
-            await builder.AddSubscription(context.SourceAddress, RoutingSlipEvents.Faulted,
+
+            await builder.AddSubscription(context.SourceAddress,
+                RoutingSlipEvents.Faulted | RoutingSlipEvents.Supplemental,
                 RoutingSlipEventContents.None,
                 x => x.Send<OrderFulfillmentFaulted>(new
+                {
+                    context.Message.OrderId, InVar.Timestamp
+                }));
+            
+            await builder.AddSubscription(context.SourceAddress,
+                RoutingSlipEvents.Completed | RoutingSlipEvents.Supplemental,
+                RoutingSlipEventContents.None,
+                x => x.Send<OrderFulfillmentCompleted>(new
                 {
                     context.Message.OrderId, InVar.Timestamp
                 }));

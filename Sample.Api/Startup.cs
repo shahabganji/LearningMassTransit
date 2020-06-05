@@ -8,9 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry.Trace.Configuration;
 using Prometheus;
-using Prometheus.HttpMetrics;
 using Sample.Contracts.Commands;
 using Sample.Contracts.Events;
 
@@ -28,28 +26,28 @@ namespace Sample.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOpenTelemetry(builder =>
-            {
-                builder.UseZipkin(o =>
-                {
-                    o.ServiceName = "sample-api";
-                    o.Endpoint = new Uri("http://localhost:9411/api/v2/spans");
-                });
-
-                builder.AddRequestCollector();
-                
-                // sets sampler
-                //b.SetSampler(new HealthRequestsSampler(Samplers.AlwaysSample));
-
-                // sets resource
-                //b.SetResource(new Resource(new Dictionary<string, string>() {
-                //    { "service.name", "BackEndApp" },
-                //    { "deploymentTenantId", "kubecon-demo-surface" } }));
-
-                // set the FlightID from the distributed context
-                //b.AddProcessorPipeline(pipelineBuilder => pipelineBuilder.AddProcessor(_ => new FlightIDProperties()));
-                
-            });
+            // services.AddOpenTelemetry(builder =>
+            // {
+            //     builder.UseZipkin(o =>
+            //     {
+            //         o.ServiceName = "sample-api";
+            //         o.Endpoint = new Uri("http://localhost:9411/api/v2/spans");
+            //     });
+            //
+            //     builder.AddRequestCollector();
+            //     
+            //     // sets sampler
+            //     //b.SetSampler(new HealthRequestsSampler(Samplers.AlwaysSample));
+            //
+            //     // sets resource
+            //     //b.SetResource(new Resource(new Dictionary<string, string>() {
+            //     //    { "service.name", "BackEndApp" },
+            //     //    { "deploymentTenantId", "kubecon-demo-surface" } }));
+            //
+            //     // set the FlightID from the distributed context
+            //     //b.AddProcessorPipeline(pipelineBuilder => pipelineBuilder.AddProcessor(_ => new FlightIDProperties()));
+            //     
+            // });
 
             // this replaces Mediator, also adds health checks
             services.AddMassTransitHostedService();

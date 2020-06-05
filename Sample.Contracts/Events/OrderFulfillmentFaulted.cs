@@ -7,4 +7,10 @@ namespace Sample.Contracts.Events
         Guid OrderId { get; }
         DateTime Timestamp { get; }
     }
+    
+    public interface OrderFulfillmentCompleted
+    {
+        Guid OrderId { get; }
+        DateTime Timestamp { get; }
+    }
 }

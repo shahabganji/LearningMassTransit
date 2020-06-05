@@ -44,7 +44,9 @@ namespace Sample.Components.StateMachines.Activities
             
             await endpoint.Send<FulfillOrderCommand>(new
             {
-                context.Data.OrderId
+                context.Data.OrderId,
+                context.Instance.CustomerNumber,
+                context.Instance.PaymentCardNumber
             });
             
             await next.Execute(context).ConfigureAwait(false);

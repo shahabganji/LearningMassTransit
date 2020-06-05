@@ -4,8 +4,10 @@ namespace Sample.Contracts.Commands
 {
     public interface SubmitOrderCommand
     {
-        public Guid OrderId { get;}
-        public DateTime Timestamp { get;  }
-        public string Customer { get;  }
+         Guid OrderId { get;}
+         DateTime Timestamp { get;  }
+        string Customer { get;  }
+        
+         string PaymentCardNumber { get; }
     }
 }
