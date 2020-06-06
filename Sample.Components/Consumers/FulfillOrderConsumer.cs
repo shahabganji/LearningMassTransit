@@ -12,9 +12,17 @@ namespace Sample.Components.Consumers
     public sealed class FulfillOrderConsumer
         : IConsumer<FulfillOrderCommand>
     {
+        private static readonly Random Randomizer = new Random();
+        
         // here we create the routing slip 
         public async Task Consume(ConsumeContext<FulfillOrderCommand> context)
         {
+            if( context.Message.CustomerNumber.StartsWith("INVALID") )
+                throw new InvalidOperationException("We tried, but the customer is invalid");
+            
+            if( context.Message.CustomerNumber.StartsWith("MAYBE") && Randomizer.Next(100) > 50 )
+                throw  new ApplicationException("We randomly exploded, so sad, much tear!");
+            
             var builder = new RoutingSlipBuilder(NewId.NextGuid());
 
             const string allocateInventory = "AllocateInventory";

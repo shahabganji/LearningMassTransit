@@ -1,8 +1,5 @@
 using System.Threading.Tasks;
-using GreenPipes;
 using MassTransit;
-using MassTransit.ConsumeConfigurators;
-using MassTransit.Definition;
 using Microsoft.Extensions.Logging;
 using Sample.Contracts.Commands;
 using Sample.Contracts.Events;
@@ -54,25 +51,6 @@ namespace Sample.Components.Consumers
                     context.Message.Customer,
                     context.Message.OrderId
                 }).ConfigureAwait(false);
-        }
-    }
-
-    public class SubmitOrderConsumerDefinition
-        : ConsumerDefinition<SubmitOrderConsumer>
-    {
-        // public SubmitOrderConsumerDefinition()
-        // {
-        //     EndpointDefinition = new ConsumerEndpointDefinition<SubmitOrderConsumer>(new EndpointSettings<IEndpointDefinition<SubmitOrderConsumer>>
-        //     {
-        //         IsTemporary = true, 
-        //         Name =$"{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}{Guid.NewGuid()}" ,
-        //     });
-        // }
-        protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
-            IConsumerConfigurator<SubmitOrderConsumer> consumerConfigurator)
-        {
-            endpointConfigurator.UseInMemoryOutbox();
-            endpointConfigurator.UseMessageRetry(r => r.Interval(3,1000));
         }
     }
 }

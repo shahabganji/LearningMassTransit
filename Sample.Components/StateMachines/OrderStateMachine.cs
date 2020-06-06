@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Automatonymous;
 using MassTransit;
 using Sample.Components.StateMachines.Activities;
+using Sample.Contracts.Commands;
 using Sample.Contracts.Events;
 using Sample.Contracts.Responses;
 
@@ -20,6 +21,9 @@ namespace Sample.Components.StateMachines
             Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
+            
+            Event(() => FulfillOrderCommandFaulted, x => x.CorrelateById(m => m.Message.Message.OrderId));
+            
             Event(() => AccountClosed,
                 x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
             Event(() => OrderStatusRequested,
@@ -62,7 +66,9 @@ namespace Sample.Components.StateMachines
                 When(FulfillmentFaulted)
                     .TransitionTo(Faulted),
                 When(FulfillmentCompleted)
-                    .TransitionTo(Completed));
+                    .TransitionTo(Completed),
+                When( FulfillOrderCommandFaulted)
+                    .TransitionTo(Faulted));
             
             DuringAny(
                 When(OrderStatusRequested)
@@ -95,5 +101,7 @@ namespace Sample.Components.StateMachines
         public Event<CheckOrderRequestedEvent> OrderStatusRequested { get; private set;}
         public Event<OrderFulfillmentFaulted> FulfillmentFaulted { get; private set;}
         public Event<OrderFulfillmentCompleted> FulfillmentCompleted { get; private set;}
+        
+        public Event<Fault<FulfillOrderCommand>> FulfillOrderCommandFaulted { get; private set; }
     }
 }
