@@ -3,6 +3,7 @@ using MassTransit;
 using MassTransit.Definition;
 using MassTransit.PrometheusIntegration;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,10 +65,12 @@ namespace Sample.Api
 
                 cfg.AddBus(context => Bus.Factory.CreateUsingRabbitMq(configure =>
                 {
+                    configure.UseHealthCheck(context);
+
                     configure.Host("localhost", "sample.api");
                     configure.ConfigureEndpoints(context);
-                    
-                    configure.UsePrometheusMetrics(serviceName:"mt-sample-api");
+
+                    configure.UsePrometheusMetrics(serviceName: "mt-sample-api");
                 }));
 
                 // adds a client that knows how to send a request to an endpoint, this endpoint should be the same 
@@ -106,6 +109,17 @@ namespace Sample.Api
                 endpoints.MapControllers();
                 endpoints.MapMetrics("/metrics/all");
                 // endpoints.MapMetrics("/metrics/mt");
+
+                endpoints.MapHealthChecks("/health/readiness", new HealthCheckOptions
+                {
+                    Predicate = check => check.Tags.Contains("ready")
+                });
+                
+                endpoints.MapHealthChecks("/health/liveness", new HealthCheckOptions
+                {
+                    Predicate = _ => false
+                });
+                
             });
         }
     }
