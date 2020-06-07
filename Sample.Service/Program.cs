@@ -1,7 +1,9 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using MassTransit;
+using MassTransit.Courier.Contracts;
 using MassTransit.Definition;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using MassTransit.MongoDbIntegration;
@@ -9,12 +11,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Sample.Components.Batch.Consumers;
 using Sample.Components.Consumers;
 using Sample.Components.CourierActivities;
 using Sample.Components.StateMachines;
 using Sample.Components.StateMachines.Activities;
 using Serilog;
 using Warehouse.Contracts.Commands;
+using Activity = System.Diagnostics.Activity;
 
 namespace Sample.Service
 {
@@ -37,7 +41,7 @@ namespace Sample.Service
                 .ConfigureLogging((context, builder) =>
                 {
                     var configuration = new ConfigurationBuilder()
-                        .AddJsonFile("serilog.json",false, true)
+                        .AddJsonFile("serilog.json", false, true)
                         .AddJsonFile($"serilog.{context.HostingEnvironment.EnvironmentName}.json", true, true)
                         .Build();
                     var logger = new LoggerConfiguration()
@@ -60,10 +64,15 @@ namespace Sample.Service
                     // });
 
                     services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
+
+                    // services.AddScoped<RoutingSlipCompletedBatchConsumer>();
+
                     services.AddMassTransit(
                         cfg =>
                         {
                             cfg.SetKebabCaseEndpointNameFormatter();
+                            
+                            cfg.AddConsumersFromNamespaceContaining<RoutingSlipCompletedBatchConsumer>();
 
                             cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
                             // adds RoutingSlip activities
@@ -78,6 +87,7 @@ namespace Sample.Service
                                     r.Connection = "mongodb://127.0.0.1";
                                     r.DatabaseName = "orderdb";
                                 });
+
                             cfg.ConfigureBus();
                         });
 
@@ -117,6 +127,24 @@ namespace Sample.Service
 
                         // creates queues, sagas and etc.
                         busFactoryConfigurator.ConfigureEndpoints(context);
+
+                        // busFactoryConfigurator.ReceiveEndpoint(
+                        //     KebabCaseEndpointNameFormatter.Instance.Consumer<RoutingSlipCompletedBatchConsumer>(),
+                        //     endpoint =>
+                        //     {
+                        //         // this should be at least the number of MessageLimit,
+                        //         // otherwise we always get a time limit  
+                        //         endpoint.PrefetchCount = 20;
+                        //
+                        //         endpoint.Batch<RoutingSlipCompleted>(b =>
+                        //         {
+                        //             b.MessageLimit = 10;
+                        //             b.TimeLimit = TimeSpan.FromSeconds(5);
+                        //
+                        //             b.Consumer<RoutingSlipCompletedBatchConsumer, RoutingSlipCompleted>(
+                        //                 context.Container);
+                        //         });
+                        //     });
                     }));
 
 
