@@ -63,13 +63,14 @@ namespace Warehouse.Service
 
     public static class SampleServiceExtensions
     {
-        public static IServiceCollectionConfigurator ConfigureBus(this IServiceCollectionConfigurator configurator)
+        public static IServiceCollectionBusConfigurator ConfigureBus(this IServiceCollectionBusConfigurator configurator)
         {
             configurator.AddBus(context =>
                 Bus.Factory.CreateUsingRabbitMq(
                     busFactoryConfigurator =>
                     {
-                        var host = busFactoryConfigurator.Host("localhost", "sample.api");
+                        busFactoryConfigurator.Host("localhost", "sample.api",
+                            hostConfigurator => { });
 
                         // when using scheduler this line should be added
                         busFactoryConfigurator.UseMessageScheduler(new Uri("queue:quartz-scheduler"));

@@ -102,13 +102,13 @@ namespace Sample.Service
 
     public static class SampleServiceExtensions
     {
-        public static IServiceCollectionConfigurator ConfigureBus(this IServiceCollectionConfigurator configurator)
+        public static IServiceCollectionBusConfigurator ConfigureBus(this IServiceCollectionBusConfigurator configurator)
         {
             configurator.AddBus(context =>
                 Bus.Factory.CreateUsingRabbitMq(
                     busFactoryConfigurator =>
                     {
-                        var host = busFactoryConfigurator.Host("localhost", "sample.api");
+                        busFactoryConfigurator.Host("localhost", "sample.api" , hostConfigurator => {});
 
                         // // we could set a consumer here by using ReceiveEndpoint,
                         // // or use the extension method of AddConsumer* on IServiceCollectionConfigurator
