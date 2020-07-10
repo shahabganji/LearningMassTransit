@@ -24,6 +24,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Components", "War
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Batch.Producer", "Sample.Batch.Producer\Sample.Batch.Producer.csproj", "{F1EEABD2-15DA-4A92-AF85-71397D55A685}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "platform-sample", "platform-sample", "{DF88A0B9-0C6B-4DBE-B8A9-D453C077E501}"
+ProjectSection(SolutionItems) = preProject
+	platform-sample\docker-compose.yml = platform-sample\docker-compose.yml
+EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Platform", "platform-sample\Sample.Platform\Sample.Platform.csproj", "{BD4E6A80-9010-4322-A01F-0CE581176307}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Platform.Test", "platform-sample\Sample.Platform.Test\Sample.Platform.Test.csproj", "{97FD85B8-F5CE-4263-95BC-658896714103}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +75,14 @@ Global
 		{F1EEABD2-15DA-4A92-AF85-71397D55A685}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1EEABD2-15DA-4A92-AF85-71397D55A685}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1EEABD2-15DA-4A92-AF85-71397D55A685}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD4E6A80-9010-4322-A01F-0CE581176307}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD4E6A80-9010-4322-A01F-0CE581176307}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD4E6A80-9010-4322-A01F-0CE581176307}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD4E6A80-9010-4322-A01F-0CE581176307}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97FD85B8-F5CE-4263-95BC-658896714103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97FD85B8-F5CE-4263-95BC-658896714103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97FD85B8-F5CE-4263-95BC-658896714103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97FD85B8-F5CE-4263-95BC-658896714103}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D459961C-7921-4FAF-8054-E7286F356B8E} = {355439D2-878D-402D-9B6F-6DFB61FD3C56}
@@ -78,5 +95,7 @@ Global
 		{BCACE1D3-1414-4A06-BAB0-4E900B0633BA} = {7B5B13D9-8839-434A-9010-DFF3C339D950}
 		{7EA0D9BB-4958-40A2-966D-F2DA38C210AA} = {7B5B13D9-8839-434A-9010-DFF3C339D950}
 		{F1EEABD2-15DA-4A92-AF85-71397D55A685} = {355439D2-878D-402D-9B6F-6DFB61FD3C56}
+		{BD4E6A80-9010-4322-A01F-0CE581176307} = {DF88A0B9-0C6B-4DBE-B8A9-D453C077E501}
+		{97FD85B8-F5CE-4263-95BC-658896714103} = {DF88A0B9-0C6B-4DBE-B8A9-D453C077E501}
 	EndGlobalSection
 EndGlobal

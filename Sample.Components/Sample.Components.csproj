@@ -11,7 +11,7 @@
 
     <ItemGroup>
       <PackageReference Include="MassTransit" Version="6.3.2" />
-      <PackageReference Include="MassTransit.Analyzers" Version="6.3.2" />
+      <PackageReference Include="MassTransit.Analyzers" Version="7.0.0" />
       <PackageReference Include="MassTransit.MongoDb" Version="6.3.2" />
 <!--      <PackageReference Include="MassTransit.Redis" Version="6.3.2" />-->
     </ItemGroup>
