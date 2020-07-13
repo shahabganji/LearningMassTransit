@@ -69,7 +69,7 @@ namespace Warehouse.Service
                 Bus.Factory.CreateUsingRabbitMq(
                     busFactoryConfigurator =>
                     {
-                        busFactoryConfigurator.Host("localhost", "sample.api",
+                        busFactoryConfigurator.Host("localhost",
                             hostConfigurator => { });
 
                         // when using scheduler this line should be added

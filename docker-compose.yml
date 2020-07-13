@@ -1,0 +1,65 @@
+version: '3.7'
+
+networks:
+  twitch: {}
+
+services:
+  rabbitmq:
+    image: masstransit/rabbitmq:latest
+    container_name: sample-platform-rabbitmq
+    networks:
+      - twitch
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 15692:15692
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 10
+      test:
+        - "CMD"
+        - "rabbitmqctl"
+        - "status"
+  sqlserver:
+    image: masstransit/sqlserver-quartz:latest
+    environment:
+      - SA_PASSWORD=P@assw0rd
+      - ACCEPT_EULA=Y
+    networks:
+      - twitch
+    ports:
+      - 1433:1433
+  quartz:
+    image: masstransit/quartz:latest
+    environment:
+      - MT_Prometheus=quartz
+      - MT_Quartz_ConnectionString=Server=tcp:sqlserver;Database=quartznet;Persist Security Info=False; UID=sa; PWD=P@assword;Encrypt=False;TrustServerCertificate=True
+    networks:
+      - twitch
+    ports:
+      - 5002:80
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - twitch
+  mongo:
+    image: mongo
+    networks:
+      - twitch
+    ports:
+      - 27017:27017
+      - 27019:27019
+  warehouse:
+    image: twitch/warehouse
+    environment:
+      - MT_Prometheus=quartz
+      - MT_Quartz=quartz
+    networks:
+      - twitch
+    ports:
+      - 5004:80 
+    
+# Quartz!DockerP4ss
