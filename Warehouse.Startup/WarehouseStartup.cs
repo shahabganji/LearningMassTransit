@@ -17,7 +17,7 @@ namespace Warehouse.Startup
                     typeof(AllocateStateMachineDefinition))
                 .MongoDbRepository(r =>
                 {
-                    r.Connection = "mongodb://127.0.0.1";
+                    r.Connection = "mongodb://mongo";
                     r.DatabaseName = "allocations";
                 });   
         }

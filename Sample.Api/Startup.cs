@@ -67,7 +67,7 @@ namespace Sample.Api
                 {
                     configure.UseHealthCheck(context);
 
-                    configure.Host("localhost", "sample.api");
+                    // configure.Host("localhost" , "" , configurator => { });
                     configure.ConfigureEndpoints(context);
 
                     configure.UsePrometheusMetrics(serviceName: "mt-sample-api");

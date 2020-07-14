@@ -13,7 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{355439D2-878D-402D-9B6F-6DFB61FD3C56}"
 ProjectSection(SolutionItems) = preProject
 	docker-compose.yml = docker-compose.yml
-	Dockerfile = Dockerfile
+	Dockerfile-warehouse = Dockerfile-warehouse
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CE2B5903-E96B-4326-8B51-94990B9B4DC6}"

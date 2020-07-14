@@ -108,7 +108,7 @@ namespace Sample.Service
                 Bus.Factory.CreateUsingRabbitMq(
                     busFactoryConfigurator =>
                     {
-                        busFactoryConfigurator.Host("localhost", "sample.api" , hostConfigurator => {});
+                        // busFactoryConfigurator.Host("localhost", "" , hostConfigurator => {});
 
                         // // we could set a consumer here by using ReceiveEndpoint,
                         // // or use the extension method of AddConsumer* on IServiceCollectionConfigurator

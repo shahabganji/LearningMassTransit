@@ -54,6 +54,9 @@ services:
       - 27019:27019
   warehouse:
     image: twitch/warehouse
+    build:
+      context: .
+      dockerfile: Dockerfile-warehouse
     environment:
       - MT_Prometheus=quartz
       - MT_Quartz=quartz
