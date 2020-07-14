@@ -56,13 +56,25 @@ services:
     image: twitch/warehouse
     build:
       context: .
-      dockerfile: Dockerfile-warehouse
+      dockerfile: Dockerfile.warehouse
     environment:
-      - MT_Prometheus=quartz
+      - MT_Prometheus=warehouse
       - MT_Quartz=quartz
     networks:
       - twitch
     ports:
-      - 5004:80 
+      - 5004:80
+  sample:
+    image: twitch/sample
+    build:
+      context: .
+      dockerfile: Dockerfile.Sample
+    environment:
+      - MT_Prometheus=sample
+      - MT_Quartz=quartz
+    networks:
+      - twitch
+    ports:
+      - 5006:80
     
 # Quartz!DockerP4ss
