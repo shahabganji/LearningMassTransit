@@ -4,6 +4,24 @@ networks:
   twitch: {}
 
 services:
+  prometheus:
+    image: prom/prometheus:v2.17.1
+    networks:
+      - twitch
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana:6.7.2
+    networks:
+      - twitch
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/rabbitmq.yaml
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/prometheus.yaml
+      - ./grafana/dashboards:/dashboards
   rabbitmq:
     image: masstransit/rabbitmq:latest
     container_name: sample-platform-rabbitmq
@@ -76,5 +94,5 @@ services:
       - twitch
     ports:
       - 5006:80
-    
+
 # Quartz!DockerP4ss
